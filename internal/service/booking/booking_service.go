@@ -79,6 +79,14 @@ func (s *BookingService) GetUserBookings(ctx context.Context, userID uint) ([]mo
 	return bookings, nil
 }
 
+func (s *BookingService) GetByID(ctx context.Context, id uint) (*models.Booking, error) {
+	booking, err := s.bookingRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return booking, nil
+}
+
 func (s *BookingService) Cancel(ctx context.Context, id uint, userID uint) (*models.Booking, error) {
 	bookingId, err := s.bookingRepo.FindByID(ctx, id)
 	if err != nil {
