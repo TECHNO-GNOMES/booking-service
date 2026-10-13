@@ -49,3 +49,13 @@ type CancelBookingOutput struct {
 		Message string `json:"message"`
 	}
 }
+
+type ConfirmBookingInput struct {
+	ID uint `path:"id"`
+}
+
+type ConfirmBookingOutput struct {
+	Body struct {
+		Message string `json:"message"`
+	}
+}

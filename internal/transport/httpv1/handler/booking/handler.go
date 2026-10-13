@@ -122,3 +122,23 @@ func (h *BookingHandler) CancelBooking(ctx context.Context, input *CancelBooking
 		},
 	}, nil
 }
+
+func (h *BookingHandler) ConfirmBooking(ctx context.Context, input *ConfirmBookingInput) (*ConfirmBookingOutput, error) {
+	userRole, ok := middleware.GetUserRoleFromContext(ctx)
+	if !ok {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	err := h.bookingService.Confirm(ctx, input.ID, userRole)
+	if err != nil {
+		return nil, huma.Error400BadRequest(err.Error())
+	}
+
+	return &ConfirmBookingOutput{
+		Body: struct {
+			Message string `json:"message"`
+		}{
+			Message: "confirm booking successfully",
+		},
+	}, nil
+}
