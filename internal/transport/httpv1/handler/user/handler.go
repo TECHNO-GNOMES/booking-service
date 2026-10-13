@@ -28,7 +28,7 @@ func (u *UserHandler) RegisterHandler(ctx context.Context, input *RegisterInput)
 		return nil, err
 	}
 
-	token, err := u.userService.GenerateToken(createdUser.ID, createdUser.Email)
+	token, err := u.userService.GenerateToken(createdUser.ID, createdUser.Email, createdUser.Role)
 	if err != nil {
 		return nil, err
 	}

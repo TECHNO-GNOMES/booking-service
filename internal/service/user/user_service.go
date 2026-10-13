@@ -136,6 +136,9 @@ func (s *UserService) Login(ctx context.Context, email, password string) (string
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := generateJWT(user.ID, user.Email, s.jwtSecret)
+	token, err := generateJWT(user.ID, user.Email, user.Role, s.jwtSecret)
+	if err != nil {
+		return "", err
+	}
 	return token, nil
 }
