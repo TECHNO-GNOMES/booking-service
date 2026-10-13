@@ -18,7 +18,7 @@ func NewBookingHandler(bookingService *booking.BookingService) *BookingHandler {
 	}
 }
 
-func (h *BookingHandler) Create(ctx context.Context, input *CreateBookingInput) (*CreateBookingOutput, error) {
+func (h *BookingHandler) CreateBookingHandler(ctx context.Context, input *CreateBookingInput) (*CreateBookingOutput, error) {
 	userID, ok := middleware.GetUserIDFromContext(ctx)
 	if !ok || userID == 0 {
 		return nil, huma.Error401Unauthorized("user not authenticated")
@@ -48,7 +48,7 @@ func (h *BookingHandler) Create(ctx context.Context, input *CreateBookingInput) 
 	}}, nil
 }
 
-func (h *BookingHandler) GetAllBookings(ctx context.Context, input *GetBookingInput) (*GetBookingOutput, error) {
+func (h *BookingHandler) GetAllBookingHandler(ctx context.Context, input *GetBookingInput) (*GetBookingOutput, error) {
 	userID, ok := middleware.GetUserIDFromContext(ctx)
 	if !ok || userID == 0 {
 		return nil, huma.Error401Unauthorized("user not authenticated")
@@ -76,7 +76,7 @@ func (h *BookingHandler) GetAllBookings(ctx context.Context, input *GetBookingIn
 	return &GetBookingOutput{Body: result}, nil
 }
 
-func (h *BookingHandler) GetBooking(ctx context.Context, input *GetBookingByIDInput) (*GetBookingByIDOutput, error) {
+func (h *BookingHandler) GetBookingHandler(ctx context.Context, input *GetBookingByIDInput) (*GetBookingByIDOutput, error) {
 	userID, ok := middleware.GetUserIDFromContext(ctx)
 	if !ok || userID == 0 {
 		return nil, huma.Error401Unauthorized("user not authenticated")
@@ -103,7 +103,7 @@ func (h *BookingHandler) GetBooking(ctx context.Context, input *GetBookingByIDIn
 	}}, nil
 }
 
-func (h *BookingHandler) CancelBooking(ctx context.Context, input *CancelBookingInput) (*CancelBookingOutput, error) {
+func (h *BookingHandler) CancelBookingHandler(ctx context.Context, input *CancelBookingInput) (*CancelBookingOutput, error) {
 	userID, ok := middleware.GetUserIDFromContext(ctx)
 	if !ok {
 		return nil, huma.Error401Unauthorized("user not authenticated")
@@ -123,7 +123,7 @@ func (h *BookingHandler) CancelBooking(ctx context.Context, input *CancelBooking
 	}, nil
 }
 
-func (h *BookingHandler) ConfirmBooking(ctx context.Context, input *ConfirmBookingInput) (*ConfirmBookingOutput, error) {
+func (h *BookingHandler) ConfirmBookingHandler(ctx context.Context, input *ConfirmBookingInput) (*ConfirmBookingOutput, error) {
 	userRole, ok := middleware.GetUserRoleFromContext(ctx)
 	if !ok {
 		return nil, huma.Error401Unauthorized("user not authenticated")
