@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/nurgal1ev/booking-service/internal/config"
+	bookingHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/booking"
 	propertyHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/property"
 
 	userHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/user"
@@ -19,6 +20,7 @@ type Handlers struct {
 	User     *userHandler.UserHandler
 	Property *propertyHandler.PropertyHandler
 	Unit     *unitHandler.UnitHandler
+	Booking  *bookingHandler.BookingHandler
 }
 
 func StartServer(h Handlers, cfg *config.Config) {
@@ -46,6 +48,7 @@ func StartServer(h Handlers, cfg *config.Config) {
 	userHandler.RegisterRoutes(api, h.User)
 	propertyHandler.RegisterRoutes(api, h.Property, cfg.Auth.Secret)
 	unitHandler.RegisterRoutes(api, h.Unit, cfg.Auth.Secret)
+	bookingHandler.RegisterRoutes(api, h.Booking, cfg.Auth.Secret)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
