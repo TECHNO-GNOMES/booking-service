@@ -47,3 +47,31 @@ func (h *BookingHandler) Create(ctx context.Context, input *CreateBookingInput) 
 		GuestCount: result.GuestCount,
 	}}, nil
 }
+
+func (h *BookingHandler) GetAllBookings(ctx context.Context, input *GetBookingInput) (*GetBookingOutput, error) {
+	userID, ok := middleware.GetUserIDFromContext(ctx)
+	if !ok || userID == 0 {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	bookings, err := h.bookingService.GetUserBookings(ctx, userID)
+	if err != nil {
+		return nil, huma.Error400BadRequest(err.Error())
+	}
+
+	result := make([]Booking, len(bookings))
+	for i, booking := range bookings {
+		result[i] = Booking{
+			ID:         booking.ID,
+			UserID:     booking.UserID,
+			UnitID:     booking.UnitID,
+			CheckIn:    booking.CheckIn,
+			CheckOut:   booking.CheckOut,
+			TotalPrice: booking.TotalPrice,
+			Status:     booking.Status,
+			GuestCount: booking.GuestCount,
+		}
+	}
+
+	return &GetBookingOutput{Body: result}, nil
+}

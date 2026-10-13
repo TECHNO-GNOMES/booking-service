@@ -25,3 +25,9 @@ type CreateBookingInput struct {
 type CreateBookingOutput struct {
 	Body Booking
 }
+
+type GetBookingInput struct{}
+
+type GetBookingOutput struct {
+	Body []Booking
+}
