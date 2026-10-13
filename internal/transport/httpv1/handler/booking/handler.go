@@ -102,3 +102,23 @@ func (h *BookingHandler) GetBooking(ctx context.Context, input *GetBookingByIDIn
 		GuestCount: booking.GuestCount,
 	}}, nil
 }
+
+func (h *BookingHandler) CancelBooking(ctx context.Context, input *CancelBookingInput) (*CancelBookingOutput, error) {
+	userID, ok := middleware.GetUserIDFromContext(ctx)
+	if !ok {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	_, err := h.bookingService.Cancel(ctx, input.ID, userID)
+	if err != nil {
+		return nil, huma.Error400BadRequest(err.Error())
+	}
+
+	return &CancelBookingOutput{
+		Body: struct {
+			Message string `json:"message"`
+		}{
+			Message: "cancel booking successfully",
+		},
+	}, nil
+}

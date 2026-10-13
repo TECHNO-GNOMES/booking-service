@@ -39,3 +39,13 @@ type GetBookingByIDInput struct {
 type GetBookingByIDOutput struct {
 	Body Booking
 }
+
+type CancelBookingInput struct {
+	ID uint `path:"id"`
+}
+
+type CancelBookingOutput struct {
+	Body struct {
+		Message string `json:"message"`
+	}
+}
