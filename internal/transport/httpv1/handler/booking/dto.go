@@ -31,3 +31,11 @@ type GetBookingInput struct{}
 type GetBookingOutput struct {
 	Body []Booking
 }
+
+type GetBookingByIDInput struct {
+	ID uint `path:"id"`
+}
+
+type GetBookingByIDOutput struct {
+	Body Booking
+}

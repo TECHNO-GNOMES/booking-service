@@ -75,3 +75,30 @@ func (h *BookingHandler) GetAllBookings(ctx context.Context, input *GetBookingIn
 
 	return &GetBookingOutput{Body: result}, nil
 }
+
+func (h *BookingHandler) GetBooking(ctx context.Context, input *GetBookingByIDInput) (*GetBookingByIDOutput, error) {
+	userID, ok := middleware.GetUserIDFromContext(ctx)
+	if !ok || userID == 0 {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	booking, err := h.bookingService.GetByID(ctx, input.ID)
+	if err != nil {
+		return nil, huma.Error404NotFound("booking not found")
+	}
+
+	if booking.UserID != userID {
+		return nil, huma.Error401Unauthorized("user not authorized")
+	}
+
+	return &GetBookingByIDOutput{Body: Booking{
+		ID:         booking.ID,
+		UserID:     booking.UserID,
+		UnitID:     booking.UnitID,
+		CheckIn:    booking.CheckIn,
+		CheckOut:   booking.CheckOut,
+		TotalPrice: booking.TotalPrice,
+		Status:     booking.Status,
+		GuestCount: booking.GuestCount,
+	}}, nil
+}
