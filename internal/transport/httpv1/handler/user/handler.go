@@ -16,11 +16,8 @@ func NewUserHandler(userService *user.UserService) *UserHandler {
 
 func (u *UserHandler) RegisterHandler(ctx context.Context, input *RegisterInput) (*RegisterOutput, error) {
 	user := &user.User{
-		FirstName: input.Body.FirstName,
-		LastName:  input.Body.LastName,
-		Username:  input.Body.Username,
-		Email:     input.Body.Email,
-		Password:  input.Body.Password,
+		Email:    input.Body.Email,
+		Password: input.Body.Password,
 	}
 
 	createdUser, err := u.userService.Create(ctx, user)
