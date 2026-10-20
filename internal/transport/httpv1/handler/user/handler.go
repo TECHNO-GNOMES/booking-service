@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/nurgal1ev/booking-service/internal/service/user"
 )
 
@@ -22,7 +23,7 @@ func (u *UserHandler) RegisterHandler(ctx context.Context, input *RegisterInput)
 
 	createdUser, err := u.userService.Create(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, huma.Error400BadRequest(err.Error())
 	}
 
 	token, err := u.userService.GenerateToken(createdUser.ID, createdUser.Email, createdUser.Role)

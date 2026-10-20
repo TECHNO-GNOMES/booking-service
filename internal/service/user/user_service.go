@@ -35,9 +35,6 @@ func NewUserService(userRepo *user.UserRepo, jwtSecret string) *UserService {
 }
 
 func (u *User) Validate() error {
-	if strings.TrimSpace(u.Username) == "" {
-		return errors.New("username is required")
-	}
 	if strings.TrimSpace(u.Email) == "" {
 		return errors.New("email is required")
 	}
