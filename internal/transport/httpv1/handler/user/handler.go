@@ -49,3 +49,5 @@ func (u *UserHandler) LoginHandler(ctx context.Context, input *LoginInput) (*Log
 
 	return resp, nil
 }
+
+func (u *UserHandler)
