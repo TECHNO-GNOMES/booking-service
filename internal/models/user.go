@@ -10,7 +10,11 @@ type User struct {
 	gorm.Model
 	FirstName string
 	LastName  string
-	Username  string
+	City      string
+	Birthday  *time.Time
+	Gender    string
+	Phone     string
+	Address   string
 	Email     string `gorm:"unique"`
 	Password  string `gorm:"unique"`
 	Role      string

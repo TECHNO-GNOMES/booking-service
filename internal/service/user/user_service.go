@@ -22,6 +22,17 @@ type User struct {
 	UpdatedAt *time.Time
 }
 
+type UpdateUserRequest struct {
+	FirstName *string
+	LastName  *string
+	Gender    *string
+	City      *string
+	Birthday  *time.Time
+	Address   *string
+	Phone     *string
+	Email     *string
+}
+
 type UserService struct {
 	userRepo  *user.UserRepo
 	jwtSecret string
@@ -135,4 +146,43 @@ func (s *UserService) Login(ctx context.Context, email, password string) (string
 		return "", err
 	}
 	return token, nil
+}
+
+func (s *UserService) Update(ctx context.Context, id uint, req *UpdateUserRequest) (*models.User, error) {
+	userID, err := s.userRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if userID == nil {
+		return nil, errors.New("user not found")
+	}
+
+	if req.Email != nil && *req.Email != userID.Email {
+		existing, err := s.userRepo.FindByEmail(ctx, *req.Email)
+		if err != nil {
+			return nil, err
+		}
+		if existing != nil {
+			return nil, errors.New("email already taken")
+		}
+	}
+
+	request := &user.UpdateUserRequest{
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Gender:    req.Gender,
+		City:      req.City,
+		Birthday:  req.Birthday,
+		Address:   req.Address,
+		Phone:     req.Phone,
+		Email:     req.Email,
+	}
+
+	err = s.userRepo.Update(ctx, id, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.userRepo.FindByID(ctx, id)
 }

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"gorm.io/gorm"
@@ -10,6 +11,17 @@ import (
 
 type UserRepo struct {
 	db *gorm.DB
+}
+
+type UpdateUserRequest struct {
+	FirstName *string
+	LastName  *string
+	Gender    *string
+	City      *string
+	Birthday  *time.Time
+	Address   *string
+	Phone     *string
+	Email     *string
 }
 
 func NewUserRepo(db *gorm.DB) *UserRepo {
@@ -58,26 +70,42 @@ func (u *UserRepo) GetAll(ctx context.Context) ([]models.User, error) {
 	return users, nil
 }
 
-func (u *UserRepo) Update(ctx context.Context, id int, firstname, lastname, username, email, password string) (*models.User, error) {
-	err := u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).Updates(models.User{
-		FirstName: firstname,
-		LastName:  lastname,
-		Username:  username,
-		Email:     email,
-		Password:  password,
-	}).Error
+func (u *UserRepo) Update(ctx context.Context, id uint, req *UpdateUserRequest) error {
+	updates := make(map[string]interface{})
 
-	if err != nil {
-		return nil, err
+	if req.FirstName != nil {
+		updates["first_name"] = *req.FirstName
 	}
 
-	var user models.User
-	err = u.db.WithContext(ctx).First(&user, id).Error
-	if err != nil {
-		return nil, err
+	if req.LastName != nil {
+		updates["last_name"] = *req.LastName
 	}
 
-	return &user, nil
+	if req.Gender != nil {
+		updates["gender"] = *req.Gender
+	}
+
+	if req.City != nil {
+		updates["city"] = *req.City
+	}
+
+	if req.Address != nil {
+		updates["address"] = *req.Address
+	}
+
+	if req.Phone != nil {
+		updates["phone"] = *req.Phone
+	}
+
+	if req.Email != nil {
+		updates["email"] = *req.Email
+	}
+
+	if req.Birthday != nil {
+		updates["birthday"] = *req.Birthday
+	}
+
+	return u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).Updates(updates).Error
 }
 
 func (u *UserRepo) Delete(ctx context.Context, id uint) error {
