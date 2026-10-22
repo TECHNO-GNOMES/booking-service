@@ -14,6 +14,7 @@ type UserRepo struct {
 }
 
 type UpdateUserRequest struct {
+	Avatar    *string
 	FirstName *string
 	LastName  *string
 	Gender    *string
@@ -103,6 +104,10 @@ func (u *UserRepo) Update(ctx context.Context, id uint, req *UpdateUserRequest) 
 
 	if req.Birthday != nil {
 		updates["birthday"] = *req.Birthday
+	}
+
+	if req.Avatar != nil {
+		updates["avatar"] = *req.Avatar
 	}
 
 	return u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).Updates(updates).Error

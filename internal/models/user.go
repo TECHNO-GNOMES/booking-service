@@ -8,6 +8,7 @@ import (
 
 type User struct {
 	gorm.Model
+	Avatar    string
 	FirstName string
 	LastName  string
 	City      string

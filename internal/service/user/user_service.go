@@ -23,6 +23,7 @@ type User struct {
 }
 
 type UpdateUserRequest struct {
+	Avatar    *string
 	FirstName *string
 	LastName  *string
 	Gender    *string
@@ -169,6 +170,7 @@ func (s *UserService) Update(ctx context.Context, id uint, req *UpdateUserReques
 	}
 
 	request := &user.UpdateUserRequest{
+		Avatar:    req.Avatar,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Gender:    req.Gender,
