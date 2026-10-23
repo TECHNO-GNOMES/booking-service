@@ -30,7 +30,7 @@ type RegisterOutput struct {
 
 type LoginInput struct {
 	Body struct {
-		Phone    *string `json:"phone"     format:"phone"`
+		Phone    *string `json:"phone" minLength:"11" maxLength:"12"`
 		Email    *string `json:"email"     format:"email"`
 		Password string  `json:"password"  minLength:"7" maxLength:"64"`
 	}
@@ -50,7 +50,7 @@ type UpdateUserInput struct {
 		City      *string    `json:"city" minLength:"1" maxLength:"100"`
 		Birthday  *time.Time `json:"birthday" format:"date-time"`
 		Gender    *string    `json:"gender" enum:"male,female"`
-		Phone     *string    `json:"phone" minLength:"10" maxLength:"20" pattern:"^\\+?[0-9\\s-]+$" format:"phone"`
+		Phone     *string    `json:"phone" minLength:"11" maxLength:"12"`
 		Address   *string    `json:"address" maxLength:"255"`
 		Email     *string    `json:"email" format:"email"`
 	}

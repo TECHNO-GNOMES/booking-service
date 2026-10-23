@@ -3,23 +3,30 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"github.com/nurgal1ev/booking-service/internal/repository/user"
+	"github.com/nyaruka/phonenumbers/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
 	ID        uint
+	Avatar    string
 	FirstName string
 	LastName  string
-	Username  string
+	Gender    string
+	City      string
+	Birthday  *time.Time
+	Address   string
+	Phone     string
 	Email     string
 	Password  string
 	Role      string
-	UpdatedAt *time.Time
 }
 
 type UpdateUserRequest struct {
@@ -50,6 +57,22 @@ func (u *User) Validate() error {
 	if strings.TrimSpace(u.Email) == "" {
 		return errors.New("email is required")
 	}
+
+	if !govalidator.IsEmail(u.Email) {
+		return errors.New("invalid email")
+	}
+
+	if strings.TrimSpace(u.Phone) != "" {
+		num, err := phonenumbers.Parse(u.Phone, "RU")
+		if err != nil {
+			return fmt.Errorf("invalid phone format: %w", err)
+		}
+
+		if !phonenumbers.IsValidNumber(num) {
+			return errors.New("phone number is not valid")
+		}
+	}
+
 	if strings.TrimSpace(u.Password) == "" {
 		return errors.New("password is required")
 	}
@@ -62,6 +85,7 @@ func (u *User) Validate() error {
 	if u.Role != "guest" && u.Role != "admin" {
 		return errors.New("role must be 'guest' or 'admin'")
 	}
+
 	return nil
 }
 
