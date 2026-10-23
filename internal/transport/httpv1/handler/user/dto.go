@@ -47,10 +47,10 @@ type UpdateUserInput struct {
 		Avatar    *string    `json:"avatar"`
 		FirstName *string    `json:"firstname" minLength:"1" maxLength:"50" pattern:"^[a-zA-Zа-яА-Я\\s-]+$"`
 		LastName  *string    `json:"lastname" minLength:"1" maxLength:"50" pattern:"^[a-zA-Zа-яА-Я\\s-]+$"`
-		City      *string    `json:"city" minLength:"1" maxLength:"100"` // ← добавил *
-		Birthday  *time.Time `json:"birthday"`
-		Gender    *string    `json:"gender" enum:"male,female,other"`
-		Phone     *string    `json:"phone" minLength:"10" maxLength:"20" pattern:"^\\+?[0-9\\s-]+$"`
+		City      *string    `json:"city" minLength:"1" maxLength:"100"`
+		Birthday  *time.Time `json:"birthday" format:"date-time"`
+		Gender    *string    `json:"gender" enum:"male,female"`
+		Phone     *string    `json:"phone" minLength:"10" maxLength:"20" pattern:"^\\+?[0-9\\s-]+$" format:"phone"`
 		Address   *string    `json:"address" maxLength:"255"`
 		Email     *string    `json:"email" format:"email"`
 	}
