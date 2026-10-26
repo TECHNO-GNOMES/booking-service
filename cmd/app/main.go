@@ -6,6 +6,7 @@ import (
 	"github.com/nurgal1ev/booking-service/internal/app"
 	"github.com/nurgal1ev/booking-service/internal/config"
 	"github.com/nurgal1ev/booking-service/internal/infrastructure/postgres"
+	"github.com/nurgal1ev/booking-service/internal/infrastructure/seaweedfs"
 	"github.com/nurgal1ev/booking-service/internal/transport/httpv1"
 )
 
@@ -16,6 +17,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	seaweedfs.NewConnectAWS()
 
 	handlers := app.InitHandlers(db.DB, cfg)
 
