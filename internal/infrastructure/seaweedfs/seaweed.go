@@ -2,31 +2,36 @@ package seaweedfs
 
 import (
 	"context"
-	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+
+	"github.com/nurgal1ev/booking-service/internal/config"
 )
 
-func NewConnectAWS() {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-central-1"))
+func NewConnectAWS(ctx context.Context, cfg *config.Config) (*s3.Client, error) {
+	awsCfg, err := awsconfig.LoadDefaultConfig(
+		ctx,
+		awsconfig.WithRegion("us-east-1"),
+		awsconfig.WithCredentialsProvider(
+			credentials.NewStaticCredentialsProvider(
+				cfg.S3Config.S3AccessKey,
+				cfg.S3Config.S3SecretKey,
+				"",
+			),
+		),
+	)
 	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+		return nil, err
 	}
 
-	svc := dynamodb.NewFromConfig(cfg)
-
-	resp, err := svc.ListTables(context.TODO(), &dynamodb.ListTablesInput{
-		Limit: aws.Int32(5),
+	// 2. Используем cfg.S3Config.S3Endpoint
+	client := s3.NewFromConfig(awsCfg, func(o *s3.Options) {
+		o.BaseEndpoint = aws.String(cfg.S3Config.S3Endpoint)
+		o.UsePathStyle = true
 	})
-	if err != nil {
-		log.Fatalf("failed to list tables, %v", err)
-	}
 
-	fmt.Println("Tables:")
-	for _, tableName := range resp.TableNames {
-		fmt.Println(tableName)
-	}
+	return client, nil
 }

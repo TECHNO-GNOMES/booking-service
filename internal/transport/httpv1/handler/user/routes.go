@@ -44,4 +44,14 @@ func RegisterRoutes(api huma.API, handler *UserHandler, authSecret string) {
 		Middlewares: authMiddleware,
 		Security:    []map[string][]string{{"jwt": {}}},
 	}, handler.GetMeHandler)
+
+	huma.Register(api, huma.Operation{
+		Method:      http.MethodPost,
+		Path:        "/api/v1/users/me/avatar",
+		Summary:     "Загрузить аватар",
+		Tags:        []string{"Users"},
+		Description: "Загружает файл аватара для текущего пользователя",
+		Security:    []map[string][]string{{"jwt": {}}},
+		Middlewares: authMiddleware,
+	}, handler.UpdateAvatarHandler)
 }

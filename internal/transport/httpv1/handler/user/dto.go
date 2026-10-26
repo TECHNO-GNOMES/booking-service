@@ -1,6 +1,10 @@
 package user
 
-import "time"
+import (
+	"time"
+
+	"github.com/danielgtaylor/huma/v2"
+)
 
 type User struct {
 	Avatar    string     `json:"avatar"`
@@ -64,4 +68,16 @@ type GetUserInput struct{}
 
 type GetUserOutput struct {
 	Body User
+}
+
+type UploadAvatarInput struct {
+	RawBody huma.MultipartFormFiles[struct {
+		Avatar huma.FormFile `form:"avatar" contentType:"image/jpeg,image/png" required:"true"`
+	}] `contentType:"multipart/form-data"`
+}
+
+type UploadAvatarOutput struct {
+	Body struct {
+		AvatarURL string `json:"avatar_url"`
+	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/nurgal1ev/booking-service/internal/app"
@@ -12,15 +13,19 @@ import (
 
 func main() {
 	cfg := config.Load()
+	ctx := context.Background()
 
 	db, err := postgres.NewDb(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	seaweedfs.NewConnectAWS()
+	s3Client, err := seaweedfs.NewConnectAWS(ctx, cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	handlers := app.InitHandlers(db.DB, cfg)
+	handlers := app.InitHandlers(db.DB, cfg, s3Client)
 
 	httpv1.StartServer(handlers, cfg)
 }
