@@ -72,7 +72,7 @@ type GetUserOutput struct {
 
 type UploadAvatarInput struct {
 	RawBody huma.MultipartFormFiles[struct {
-		Avatar huma.FormFile `form:"avatar" contentType:"image/jpeg,image/png" required:"true"`
+		Avatar huma.FormFile `form:"avatar" contentType:"image/jpeg,image/png,image/webp" required:"true"`
 	}] `contentType:"multipart/form-data"`
 }
 

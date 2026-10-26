@@ -26,10 +26,11 @@ type AuthConfig struct {
 }
 
 type S3Config struct {
-	S3Endpoint  string `env:"S3_ENDPOINT"`
-	S3AccessKey string `env:"S3_ACCESS_KEY"`
-	S3SecretKey string `env:"S3_SECRET_KEY"`
-	S3Bucket    string `env:"S3_BUCKET"`
+	S3Endpoint       string `env:"S3_ENDPOINT"`
+	S3PublicEndpoint string `env:"S3_PUBLIC_ENDPOINT"`
+	S3AccessKey      string `env:"S3_ACCESS_KEY"`
+	S3SecretKey      string `env:"S3_SECRET_KEY"`
+	S3Bucket         string `env:"S3_BUCKET"`
 }
 
 func (cfg DatabaseConfig) DSN() string {
@@ -61,10 +62,11 @@ func Load() *Config {
 			Secret: os.Getenv("JWT_SECRET"),
 		},
 		S3Config: S3Config{
-			S3Endpoint:  os.Getenv("S3_ENDPOINT"),
-			S3AccessKey: os.Getenv("S3_ACCESS_KEY"),
-			S3SecretKey: os.Getenv("S3_SECRET_KEY"),
-			S3Bucket:    os.Getenv("S3_BUCKET"),
+			S3PublicEndpoint: os.Getenv("S3_PUBLIC_ENDPOINT"),
+			S3Endpoint:       os.Getenv("S3_ENDPOINT"),
+			S3AccessKey:      os.Getenv("S3_ACCESS_KEY"),
+			S3SecretKey:      os.Getenv("S3_SECRET_KEY"),
+			S3Bucket:         os.Getenv("S3_BUCKET"),
 		},
 	}
 }

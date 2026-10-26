@@ -27,7 +27,6 @@ func NewConnectAWS(ctx context.Context, cfg *config.Config) (*s3.Client, error) 
 		return nil, err
 	}
 
-	// 2. Используем cfg.S3Config.S3Endpoint
 	client := s3.NewFromConfig(awsCfg, func(o *s3.Options) {
 		o.BaseEndpoint = aws.String(cfg.S3Config.S3Endpoint)
 		o.UsePathStyle = true

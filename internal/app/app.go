@@ -21,7 +21,7 @@ import (
 )
 
 func InitHandlers(db *gorm.DB, cfg *config.Config, s3Client *s3.Client) httpv1.Handlers {
-	filestorage := seaweedfs.NewFileStorage(s3Client, cfg.S3Config.S3Endpoint)
+	filestorage := seaweedfs.NewFileStorage(s3Client, cfg.S3Config.S3Endpoint, cfg.S3Config.S3PublicEndpoint)
 
 	userRepository := userRepo.NewUserRepo(db)
 	userService := userService.NewUserService(userRepository, cfg.Auth.Secret)
