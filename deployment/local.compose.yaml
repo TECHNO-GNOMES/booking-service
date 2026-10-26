@@ -9,11 +9,20 @@ x-postgres-env: &postgres-env
   POSTGRES_PASSWORD: "admin"
   POSTGRES_DB: "local_db"
 
+x-seaweed-env: &seaweed-env
+  S3_ACCESS_KEY: "37af3a465e161c58a570e4522e64d757"
+  S3_SECRET_KEY: "de522aeeedca678bd7b27a011ab1a186"
+  S3_ENDPOINT: "http://seaweedfs:8333"
+  S3_BUCKET: "avatars"
+  AWS_ACCESS_KEY_ID: "37af3a465e161c58a570e4522e64d757"
+  AWS_SECRET_ACCESS_KEY: "de522aeeedca678bd7b27a011ab1a186"
+
 x-app-env: &app-env
-  <<: [*postgres-env]
+  <<: [*postgres-env, *seaweed-env]
 
   APP_AUTH_TOKEN: "development"
   APP_ALLOWED_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+
 
 
 services:
@@ -30,6 +39,7 @@ services:
       <<: *app-env
     depends_on:
       - postgres
+      - seaweedfs
     networks:
       - default
 
@@ -44,5 +54,19 @@ services:
     networks:
       - default
 
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: booking-seaweedfs
+    command: "server -s3 -s3.port=8333 -ip.bind=0.0.0.0"
+    environment:
+      <<: *seaweed-env
+    ports:
+      - "127.0.0.1:8333:8333"
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - default
+
 volumes:
   postgres_data:
+  seaweedfs_data:

@@ -4,16 +4,18 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
+	"github.com/nurgal1ev/booking-service/internal/infrastructure/seaweedfs"
 	"github.com/nurgal1ev/booking-service/internal/service/user"
 	"github.com/nurgal1ev/booking-service/internal/transport/middleware"
 )
 
 type UserHandler struct {
 	userService *user.UserService
+	fileStorage *seaweedfs.FileStorage
 }
 
-func NewUserHandler(userService *user.UserService) *UserHandler {
-	return &UserHandler{userService: userService}
+func NewUserHandler(userService *user.UserService, fileStorage *seaweedfs.FileStorage) *UserHandler {
+	return &UserHandler{userService: userService, fileStorage: fileStorage}
 }
 
 func (u *UserHandler) RegisterHandler(ctx context.Context, input *RegisterInput) (*RegisterOutput, error) {
@@ -66,7 +68,6 @@ func (u *UserHandler) UpdateProfileHandler(ctx context.Context, input *UpdateUse
 	}
 
 	req := &user.UpdateUserRequest{
-		Avatar:    input.Body.Avatar,
 		FirstName: input.Body.FirstName,
 		LastName:  input.Body.LastName,
 		Email:     input.Body.Email,
@@ -84,7 +85,6 @@ func (u *UserHandler) UpdateProfileHandler(ctx context.Context, input *UpdateUse
 
 	return &UpdateUserOutput{
 		Body: User{
-			Avatar:    updatedProfile.Avatar,
 			FirstName: updatedProfile.FirstName,
 			LastName:  updatedProfile.LastName,
 			Email:     updatedProfile.Email,
@@ -94,6 +94,31 @@ func (u *UserHandler) UpdateProfileHandler(ctx context.Context, input *UpdateUse
 			Phone:     updatedProfile.Phone,
 		},
 	}, nil
+}
+
+func (u *UserHandler) UpdateAvatarHandler(ctx context.Context, input *UploadAvatarInput) (*UploadAvatarOutput, error) {
+	userID, ok := middleware.GetUserIDFromContext(ctx)
+	if !ok || userID == 0 {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	file := input.RawBody.Data()
+	avatar := file.Avatar
+
+	url, err := u.fileStorage.Upload(ctx, userID, avatar, avatar.Filename)
+	if err != nil {
+		return nil, huma.Error400BadRequest("failed to upload avatar: " + err.Error())
+	}
+
+	req := &user.UpdateUserRequest{Avatar: &url}
+	_, err = u.userService.Update(ctx, userID, req)
+	if err != nil {
+		return nil, huma.Error400BadRequest(err.Error())
+	}
+
+	resp := &UploadAvatarOutput{}
+	resp.Body.AvatarURL = url
+	return resp, nil
 }
 
 func (u *UserHandler) GetMeHandler(ctx context.Context, input *GetUserInput) (*GetUserOutput, error) {

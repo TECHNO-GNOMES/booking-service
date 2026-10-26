@@ -11,6 +11,7 @@ import (
 type Config struct {
 	DbConfig DatabaseConfig
 	Auth     AuthConfig
+	S3Config S3Config
 }
 
 type DatabaseConfig struct {
@@ -22,6 +23,14 @@ type DatabaseConfig struct {
 }
 type AuthConfig struct {
 	Secret string
+}
+
+type S3Config struct {
+	S3Endpoint       string `env:"S3_ENDPOINT"`
+	S3PublicEndpoint string `env:"S3_PUBLIC_ENDPOINT"`
+	S3AccessKey      string `env:"S3_ACCESS_KEY"`
+	S3SecretKey      string `env:"S3_SECRET_KEY"`
+	S3Bucket         string `env:"S3_BUCKET"`
 }
 
 func (cfg DatabaseConfig) DSN() string {
@@ -51,6 +60,13 @@ func Load() *Config {
 		},
 		Auth: AuthConfig{
 			Secret: os.Getenv("JWT_SECRET"),
+		},
+		S3Config: S3Config{
+			S3PublicEndpoint: os.Getenv("S3_PUBLIC_ENDPOINT"),
+			S3Endpoint:       os.Getenv("S3_ENDPOINT"),
+			S3AccessKey:      os.Getenv("S3_ACCESS_KEY"),
+			S3SecretKey:      os.Getenv("S3_SECRET_KEY"),
+			S3Bucket:         os.Getenv("S3_BUCKET"),
 		},
 	}
 }
