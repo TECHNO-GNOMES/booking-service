@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -21,22 +19,7 @@ type AmenitiesRoom struct {
 	Name string
 }
 
-type CheckInAfter struct {
+type ServicesRoom struct {
 	gorm.Model
-	TimeAfter *time.Time
-}
-
-type CheckInBefore struct {
-	gorm.Model
-	TimeBefore *time.Time
-}
-
-type CheckOutAfter struct {
-	gorm.Model
-	TimeAfter *time.Time
-}
-
-type CheckOutBefore struct {
-	gorm.Model
-	TimeBefore *time.Time
+	Name string
 }
