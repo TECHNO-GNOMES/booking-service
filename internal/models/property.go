@@ -36,9 +36,9 @@ type Property struct {
 	// 1 шаг - создание карточки
 	Name            string     // название площадки
 	City            string     // ваш город
-	Address         string     // адрес площадки
-	DistrictAddress string     // район
-	MetroAddress    string     // метро
+	Address         *string    // адрес площадки
+	DistrictAddress *string    // район
+	MetroAddress    *string    // метро
 	WorkTime        *time.Time // время работы
 	OnlineScreen    bool       // онлайн показ есть/нет
 
@@ -64,34 +64,34 @@ type Property struct {
 	ParkingID uint    // парковка
 	Parking   Parking `gorm:"foreignKey:ParkingID"`
 
-	ParkingSpacesID uint          // количество парковочных мест
+	ParkingSpacesID *uint         // количество парковочных мест
 	ParkingSpaces   ParkingSpaces `gorm:"foreignKey:ParkingSpacesID"`
 
-	InteriorStyleID uint          // стиль интерьера
+	InteriorStyleID *uint         // стиль интерьера
 	InteriorStyle   InteriorStyle `gorm:"foreignKey:InteriorStyleID"`
 
 	// залы
-	HallName          string // название зала
-	Area              string // площадь зала кв. м.
-	GuestCountBanquet int    // кол-во мест банкет
-	GuestCountBuffet  int    // кол-во мест фуршет
-	GuestCountTheater int    // кол-во мест рассадка театр
-	GuestCountMore    int    // кол-во мест/еще
-	Description       string // описание зала
+	HallName          *string // название зала
+	Area              *string // площадь зала кв. м.
+	GuestCountBanquet *int    // кол-во мест банкет
+	GuestCountBuffet  *int    // кол-во мест фуршет
+	GuestCountTheater *int    // кол-во мест рассадка театр
+	GuestCountMore    *int    // кол-во мест/еще
+	Description       string  // описание площадки
 
 	// цены
-	AverageCheckGuest int               // средний чек на гостя (сумма в рублях)
-	BanquetMenuCheck  int               // банкетное меню на гостя (сумма в рублях)
-	BuffetMenuCheck   int               // фуршетное меню на гостя (сумма в рублях)
-	RentalPrice       int               // аренда/час
-	RentalWeekDays    int               // аренда площадка под мероприятия в будни/выходные и праздничные дни
-	DepositMin        string            // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
-	DepositInfo       string            // что входит в депозит
-	OwnAlcoholAllowed OwnAlcoholAllowed // возможность своего алкоголя
-	ServiceSupport    ServiceSupport    // сервисное обслуживание
-	CorkageFee        string            // пробковый сбор
-	ExtraCost         string            // дополнительные затраты
-	ExtraInfo         string            // дополнительно
+	AverageCheckGuest *int               // средний чек на гостя (сумма в рублях)
+	BanquetMenuCheck  *int               // банкетное меню на гостя (сумма в рублях)
+	BuffetMenuCheck   *int               // фуршетное меню на гостя (сумма в рублях)
+	RentalPrice       *int               // аренда/час
+	RentalWeekDays    *int               // аренда площадка под мероприятия в будни/выходные и праздничные дни
+	DepositMin        *string            // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
+	DepositInfo       *string            // что входит в депозит
+	OwnAlcoholAllowed *OwnAlcoholAllowed // возможность своего алкоголя
+	ServiceSupport    *ServiceSupport    // сервисное обслуживание
+	CorkageFee        *string            // пробковый сбор
+	ExtraCost         *string            // дополнительные затраты
+	ExtraInfo         *string            // дополнительно
 
 	Image string // медиатека
 
@@ -99,7 +99,7 @@ type Property struct {
 	RoomCategoryID    uint              // категории номеров
 	RoomCategory      RoomCategory      `gorm:"foreignKey:RoomCategoryID"`
 	SleepingPlacesID  uint              // спальные места
-	SleepingPlaces    SleepingPlaces    `gorm:"foreignKey:SleepingPlacesID"`
+	SleepingPlaces    *SleepingPlaces   `gorm:"foreignKey:SleepingPlacesID"`
 	AmenitiesRoomID   uint              // удобство в номерах
 	AmenitiesRoom     AmenitiesRoom     `gorm:"foreignKey:AmenitiesRoomID"`
 	ServicesRoomID    uint              // услуги
@@ -108,10 +108,10 @@ type Property struct {
 	CheckInBefore     *time.Time        //время заезда (до)
 	CheckOutAfter     *time.Time        //время выезда (от)
 	CheckOutBefore    *time.Time        //время выезда (до)
-	RoomName          string            // название
+	RoomName          *string           // название
 	AccommodationType AccommodationType // тип размещения
-	RoomPrice         int               // цена
-	RoomInfo          string            // дополнительно
+	RoomPrice         *int              // цена
+	RoomInfo          *string           // дополнительно
 
 	OwnerID uint
 	Owner   User `gorm:"foreignKey:OwnerID"`
