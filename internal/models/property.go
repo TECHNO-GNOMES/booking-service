@@ -43,32 +43,17 @@ type Property struct {
 	OnlineScreen    bool       // онлайн показ есть/нет
 
 	// 2 шаг - создание карточки
-	CategoryID uint     // категория
-	Category   Category `gorm:"foreignKey:CategoryID"`
+	CategoryID     uint // категория
+	LocationTypeID uint // тип места
+	FeaturesID     uint // особенности
+	ServicesID     uint // услуги
+	EquipmentID    uint // оборудование в наличии
+	KitchenID      uint // кухня
 
-	LocationTypeID uint         // тип места
-	LocationType   LocationType `gorm:"foreignKey:LocationTypeID"`
+	ParkingAvailable bool // парковка
+	ParkingSpaces    int
 
-	FeaturesID uint     // особенности
-	Features   Features `gorm:"foreignKey:FeaturesID"`
-
-	ServicesID uint     // услуги
-	Services   Services `gorm:"foreignKey:ServicesID"`
-
-	EquipmentID uint      // оборудование в наличии
-	Equipment   Equipment `gorm:"foreignKey:EquipmentID"`
-
-	KitchenID uint    // кухня
-	Kitchen   Kitchen `gorm:"foreignKey:KitchenID"`
-
-	ParkingID uint    // парковка
-	Parking   Parking `gorm:"foreignKey:ParkingID"`
-
-	ParkingSpacesID *uint         // количество парковочных мест
-	ParkingSpaces   ParkingSpaces `gorm:"foreignKey:ParkingSpacesID"`
-
-	InteriorStyleID *uint         // стиль интерьера
-	InteriorStyle   InteriorStyle `gorm:"foreignKey:InteriorStyleID"`
+	InteriorStyleID *uint // стиль интерьера
 
 	// залы
 	HallName          *string // название зала
@@ -97,13 +82,9 @@ type Property struct {
 
 	// номерной фонд
 	RoomCategoryID    uint              // категории номеров
-	RoomCategory      RoomCategory      `gorm:"foreignKey:RoomCategoryID"`
 	SleepingPlacesID  uint              // спальные места
-	SleepingPlaces    *SleepingPlaces   `gorm:"foreignKey:SleepingPlacesID"`
 	AmenitiesRoomID   uint              // удобство в номерах
-	AmenitiesRoom     AmenitiesRoom     `gorm:"foreignKey:AmenitiesRoomID"`
 	ServicesRoomID    uint              // услуги
-	ServicesRoom      ServicesRoom      `gorm:"foreignKey:ServicesRoomID"`
 	CheckInAfter      *time.Time        //время заезда (от)
 	CheckInBefore     *time.Time        //время заезда (до)
 	CheckOutAfter     *time.Time        //время выезда (от)
