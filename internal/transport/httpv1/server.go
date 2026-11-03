@@ -12,14 +12,11 @@ import (
 	propertyHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/property"
 
 	userHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/user"
-
-	unitHandler "github.com/nurgal1ev/booking-service/internal/transport/httpv1/handler/unit"
 )
 
 type Handlers struct {
 	User     *userHandler.UserHandler
 	Property *propertyHandler.PropertyHandler
-	Unit     *unitHandler.UnitHandler
 	Booking  *bookingHandler.BookingHandler
 }
 
@@ -47,7 +44,6 @@ func StartServer(h Handlers, cfg *config.Config) {
 	api := humachi.New(r, humaCfg)
 	userHandler.RegisterRoutes(api, h.User, cfg.Auth.Secret)
 	propertyHandler.RegisterRoutes(api, h.Property, cfg.Auth.Secret)
-	unitHandler.RegisterRoutes(api, h.Unit, cfg.Auth.Secret)
 	bookingHandler.RegisterRoutes(api, h.Booking, cfg.Auth.Secret)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
