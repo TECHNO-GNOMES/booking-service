@@ -1,5 +1,6 @@
 package booking
 
+/*
 import (
 	"context"
 
@@ -141,4 +142,4 @@ func (h *BookingHandler) ConfirmBookingHandler(ctx context.Context, input *Confi
 			Message: "confirm booking successfully",
 		},
 	}, nil
-}
+}*/

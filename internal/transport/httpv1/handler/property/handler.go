@@ -54,50 +54,45 @@ func (h *PropertyHandler) CreatePropertyHandler(ctx context.Context, input *Crea
 
 	return &CreatePropertyOutput{
 		Body: Property{
-			Name:          result.Name,
-			Description:   result.Description,
-			Address:       result.Address,
-			PricePerNight: result.PricePerNight,
-			PropertyType:  result.PropertyType,
+			Name:        result.Name,
+			Description: result.Description,
 		},
 	}, nil
 }
 
-func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetPropertyInput) (*GetPropertyOutput, error) {
-	property, err := h.propertyService.GetById(ctx, input.ID)
-	if err != nil {
-		return nil, huma.Error404NotFound("property not found")
-	}
-
-	if property == nil {
-		return nil, huma.Error404NotFound("property not found")
-	}
-
-	unitsDTOs := make([]*PropertyUnitDTO, len(property.Units))
-	for i, unit := range property.Units {
-		unitsDTOs[i] = &PropertyUnitDTO{
-			ID:            unit.ID,
-			Name:          unit.Name,
-			Description:   unit.Description,
-			PricePerNight: unit.PricePerNight,
-			Capacity:      unit.Capacity,
-			IsAvailable:   unit.IsAvailable,
+/*
+	func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetPropertyInput) (*GetPropertyOutput, error) {
+		property, err := h.propertyService.GetById(ctx, input.ID)
+		if err != nil {
+			return nil, huma.Error404NotFound("property not found")
 		}
+
+		if property == nil {
+			return nil, huma.Error404NotFound("property not found")
+		}
+
+		unitsDTOs := make([]*PropertyUnitDTO, len(property.Units))
+		for i, unit := range property.Units {
+			unitsDTOs[i] = &PropertyUnitDTO{
+				ID:            unit.ID,
+				Name:          unit.Name,
+				Description:   unit.Description,
+				PricePerNight: unit.PricePerNight,
+				Capacity:      unit.Capacity,
+				IsAvailable:   unit.IsAvailable,
+			}
+		}
+
+		return &GetPropertyOutput{
+			Body: Property{
+				ID:            property.ID,
+				Name:          property.Name,
+				Description:   property.Description,
+				Units:         unitsDTOs,
+			},
+		}, nil
 	}
-
-	return &GetPropertyOutput{
-		Body: Property{
-			ID:            property.ID,
-			Name:          property.Name,
-			Description:   property.Description,
-			Address:       property.Address,
-			PricePerNight: property.PricePerNight,
-			PropertyType:  property.PropertyType,
-			Units:         unitsDTOs,
-		},
-	}, nil
-}
-
+*/
 func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *UpdatePropertyInput) (*UpdatePropertyOutput, error) {
 	propertyID, err := h.propertyService.GetById(ctx, input.ID)
 	if err != nil {
@@ -132,11 +127,8 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 
 	return &UpdatePropertyOutput{
 		Body: Property{
-			Name:          updatedProperty.Name,
-			Description:   updatedProperty.Description,
-			Address:       updatedProperty.Address,
-			PricePerNight: updatedProperty.PricePerNight,
-			PropertyType:  updatedProperty.PropertyType,
+			Name:        updatedProperty.Name,
+			Description: updatedProperty.Description,
 		},
 	}, nil
 }

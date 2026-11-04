@@ -91,14 +91,10 @@ func (s *PropertyService) Create(ctx context.Context, p *Property) (*models.Prop
 	}
 
 	var property = models.Property{
-		Name:          p.Name,
-		Description:   p.Description,
-		Address:       p.Address,
-		City:          p.City,
-		Country:       p.Country,
-		PricePerNight: p.PricePerNight,
-		PropertyType:  p.PropertyType,
-		OwnerID:       p.OwnerID,
+		Name:        p.Name,
+		Description: p.Description,
+		City:        p.City,
+		OwnerID:     p.OwnerID,
 	}
 
 	err = s.propertyRepo.Create(ctx, &property)
