@@ -40,7 +40,8 @@ type Property struct {
 	DistrictAddress *string    // район
 	MetroAddress    *string    // метро
 	WorkTime        *time.Time // время работы
-	OnlineScreen    bool       // онлайн показ есть/нет
+	Phone           string
+	OnlineScreen    bool // онлайн показ есть/нет
 
 	// 2 шаг - создание карточки
 	CategoryID     uint // категория
@@ -93,6 +94,8 @@ type Property struct {
 	AccommodationType AccommodationType // тип размещения
 	RoomPrice         *int              // цена
 	RoomInfo          *string           // дополнительно
+
+	Reviews []Review `gorm:"foreignkey:PropertyID"`
 
 	OwnerID uint
 	Owner   User `gorm:"foreignKey:OwnerID"`
