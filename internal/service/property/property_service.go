@@ -3,7 +3,7 @@ package property
 import (
 	"context"
 	"errors"
-	"strings"
+	"time"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"github.com/nurgal1ev/booking-service/internal/repository/property"
@@ -11,25 +11,79 @@ import (
 )
 
 type Property struct {
-	ID            uint
-	Name          string
-	Description   string
-	Address       string
-	City          string
-	Country       string
-	PricePerNight int
-	PropertyType  string
-	OwnerID       uint
+	ID uint
+	// 1 шаг - создание карточки
+	Name            string     // название площадки
+	City            string     // ваш город
+	Address         *string    // адрес площадки
+	DistrictAddress *string    // район
+	MetroAddress    *string    // метро
+	WorkTime        *time.Time // время работы
+	Phone           string     // номер телефона
+	OnlineScreen    bool       // онлайн показ есть/нет
+
+	// 2 шаг - создание карточки
+	CategoryID     uint // категория
+	LocationTypeID uint // тип места
+	FeaturesID     uint // особенности
+	ServicesID     uint // услуги
+	EquipmentID    uint // оборудование в наличии
+	KitchenID      uint // кухня
+
+	ParkingAvailable bool // парковка
+	ParkingSpaces    int
+
+	InteriorStyleID *uint // стиль интерьера
+
+	// залы
+	HallName          *string // название зала
+	Area              *string // площадь зала кв. м.
+	GuestCountBanquet *int    // кол-во мест банкет
+	GuestCountBuffet  *int    // кол-во мест фуршет
+	GuestCountTheater *int    // кол-во мест рассадка театр
+	GuestCountMore    *int    // кол-во мест/еще
+	Description       string  // описание площадки
+
+	// цены
+	AverageCheckGuest *int                      // средний чек на гостя (сумма в рублях)
+	BanquetMenuCheck  *int                      // банкетное меню на гостя (сумма в рублях)
+	BuffetMenuCheck   *int                      // фуршетное меню на гостя (сумма в рублях)
+	RentalPrice       *int                      // аренда/час
+	RentalWeekDays    *int                      // аренда площадка под мероприятия в будни/выходные и праздничные дни
+	DepositMin        *string                   // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
+	DepositInfo       *string                   // что входит в депозит
+	OwnAlcoholAllowed *models.OwnAlcoholAllowed // возможность своего алкоголя
+	ServiceSupport    *models.ServiceSupport    // сервисное обслуживание
+	CorkageFee        *string                   // пробковый сбор
+	ExtraCost         *string                   // дополнительные затраты
+	ExtraInfo         *string                   // дополнительно
+
+	Image string // медиатека
+
+	// номерной фонд
+	RoomCategoryID    uint                     // категории номеров
+	SleepingPlacesID  uint                     // спальные места
+	AmenitiesRoomID   uint                     // удобство в номерах
+	ServicesRoomID    uint                     // услуги
+	CheckInAfter      *time.Time               //время заезда (от)
+	CheckInBefore     *time.Time               //время заезда (до)
+	CheckOutAfter     *time.Time               //время выезда (от)
+	CheckOutBefore    *time.Time               //время выезда (до)
+	RoomName          *string                  // название
+	AccommodationType models.AccommodationType // тип размещения
+	RoomPrice         *int                     // цена
+	RoomInfo          *string                  // дополнительно
+	OwnerID           uint
 }
 
 type PropertyFilter struct {
-	City         string
-	Country      string
-	PropertyType string
-	MinPrice     int
-	MaxPrice     int
-	Search       string
-	OwnerID      uint
+	Search         string
+	CategoryID     uint
+	LocationTypeID uint
+	GuestCountMin  *int
+	MinPrice       *int
+	MaxPrice       *int
+	City           string
 }
 
 type UpdatePropertyRequest struct {
@@ -54,28 +108,6 @@ func NewPropertyService(propertyRepo *property.PropertyRepo, userRepo *user.User
 	}
 }
 
-func (p *Property) Validate() error {
-	if strings.TrimSpace(p.Name) == "" {
-		return errors.New("property name cannot be empty")
-	}
-
-	if p.PricePerNight <= 0 {
-		return errors.New("price per night must be greater than zero")
-	}
-
-	if p.OwnerID == 0 {
-		return errors.New("owner id is required")
-	}
-
-	validTypes := []string{"hotel", "apartment", "house", "villa"}
-	for _, t := range validTypes {
-		if p.PropertyType == t {
-			return nil
-		}
-	}
-	return errors.New("property type must be: hotel, apartment, house, or villa")
-}
-
 func (s *PropertyService) Create(ctx context.Context, p *Property) (*models.Property, error) {
 	user, err := s.userRepo.FindByID(ctx, p.OwnerID)
 	if err != nil {
@@ -91,10 +123,54 @@ func (s *PropertyService) Create(ctx context.Context, p *Property) (*models.Prop
 	}
 
 	var property = models.Property{
-		Name:        p.Name,
-		Description: p.Description,
-		City:        p.City,
-		OwnerID:     p.OwnerID,
+		Name:              p.Name,
+		City:              p.City,
+		Address:           p.Address,
+		DistrictAddress:   p.DistrictAddress,
+		MetroAddress:      p.MetroAddress,
+		WorkTime:          p.WorkTime,
+		Phone:             p.Phone,
+		OnlineScreen:      p.OnlineScreen,
+		CategoryID:        p.CategoryID,
+		LocationTypeID:    p.LocationTypeID,
+		FeaturesID:        p.FeaturesID,
+		ServicesID:        p.ServicesID,
+		EquipmentID:       p.EquipmentID,
+		KitchenID:         p.KitchenID,
+		ParkingAvailable:  p.ParkingAvailable,
+		ParkingSpaces:     p.ParkingSpaces,
+		InteriorStyleID:   p.InteriorStyleID,
+		HallName:          p.HallName,
+		Area:              p.Area,
+		GuestCountBanquet: p.GuestCountBanquet,
+		GuestCountBuffet:  p.GuestCountBuffet,
+		GuestCountTheater: p.GuestCountTheater,
+		GuestCountMore:    p.GuestCountMore,
+		Description:       p.Description,
+		AverageCheckGuest: p.AverageCheckGuest,
+		BanquetMenuCheck:  p.BanquetMenuCheck,
+		BuffetMenuCheck:   p.BuffetMenuCheck,
+		RentalPrice:       p.RentalPrice,
+		RentalWeekDays:    p.RentalWeekDays,
+		DepositMin:        p.DepositMin,
+		DepositInfo:       p.DepositInfo,
+		OwnAlcoholAllowed: p.OwnAlcoholAllowed,
+		ServiceSupport:    p.ServiceSupport,
+		CorkageFee:        p.CorkageFee,
+		ExtraCost:         p.ExtraCost,
+		ExtraInfo:         p.ExtraInfo,
+		Image:             p.Image,
+		RoomCategoryID:    p.RoomCategoryID,
+		SleepingPlacesID:  p.SleepingPlacesID,
+		AmenitiesRoomID:   p.AmenitiesRoomID,
+		ServicesRoomID:    p.ServicesRoomID,
+		CheckInBefore:     p.CheckInBefore,
+		CheckOutBefore:    p.CheckOutBefore,
+		RoomName:          p.RoomName,
+		AccommodationType: p.AccommodationType,
+		RoomPrice:         p.RoomPrice,
+		RoomInfo:          p.RoomInfo,
+		OwnerID:           p.OwnerID,
 	}
 
 	err = s.propertyRepo.Create(ctx, &property)
@@ -123,34 +199,35 @@ func (s *PropertyService) GetById(ctx context.Context, id uint) (*models.Propert
 }
 
 func (s *PropertyService) GetAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
-	if filter.MinPrice > filter.MaxPrice {
-		return nil, errors.New("minPrice cannot be greater than maxPrice")
-	}
-
-	if filter.PropertyType != "" {
-		validTypes := []string{"hotel", "apartment", "house", "camping"}
-		isValid := false
-		for _, t := range validTypes {
-			if filter.PropertyType == t {
-				isValid = true
-				break
-			}
-		}
-		if !isValid {
-			return nil, errors.New("invalid property type. Allowed: hotel, apartment, house, camping")
+	if filter.MinPrice != nil && filter.MaxPrice != nil {
+		if *filter.MinPrice > *filter.MaxPrice {
+			return nil, errors.New("minPrice cannot be greater than maxPrice")
 		}
 	}
 
-	result := property.PropertyFilter{
-		City:         filter.City,
-		Country:      filter.Country,
-		PropertyType: filter.PropertyType,
-		MinPrice:     filter.MinPrice,
-		MaxPrice:     filter.MaxPrice,
-		Search:       filter.Search,
+	if filter.CategoryID > 0 {
+		if _, ok := models.Category[filter.CategoryID]; !ok {
+			return nil, errors.New("invalid category ID")
+		}
 	}
 
-	properties, err := s.propertyRepo.FindAll(ctx, result)
+	if filter.LocationTypeID > 0 {
+		if _, ok := models.LocationType[filter.LocationTypeID]; !ok {
+			return nil, errors.New("invalid location type ID")
+		}
+	}
+
+	repoFilter := property.PropertyFilter{
+		Search:         filter.Search,
+		CategoryID:     filter.CategoryID,
+		LocationTypeID: filter.LocationTypeID,
+		GuestCountMin:  filter.GuestCountMin,
+		MinPrice:       filter.MinPrice,
+		MaxPrice:       filter.MaxPrice,
+		City:           filter.City,
+	}
+
+	properties, err := s.propertyRepo.FindAll(ctx, repoFilter)
 	if err != nil {
 		return nil, err
 	}
