@@ -34,7 +34,7 @@ type UpdateUserRequest struct {
 	FirstName *string
 	LastName  *string
 	Gender    *string
-	City      *string
+	City      string
 	Birthday  *time.Time
 	Address   *string
 	Phone     *string

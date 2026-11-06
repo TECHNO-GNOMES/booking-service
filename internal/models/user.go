@@ -8,14 +8,14 @@ import (
 
 type User struct {
 	gorm.Model
-	Avatar    string
-	FirstName string
-	LastName  string
+	Avatar    *string
+	FirstName *string
+	LastName  *string
 	City      string
 	Birthday  *time.Time
-	Gender    string
-	Phone     string
-	Address   string
+	Gender    *string
+	Phone     *string
+	Address   *string
 	Email     string `gorm:"unique"`
 	Password  string `gorm:"unique"`
 	Role      string
