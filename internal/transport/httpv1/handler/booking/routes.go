@@ -1,5 +1,6 @@
 package booking
 
+/*
 import (
 	"net/http"
 
@@ -62,4 +63,4 @@ func RegisterRoutes(api huma.API, handler *BookingHandler, authSecret string) {
 		Security:    []map[string][]string{{"jwt": {}}},
 		Middlewares: authMiddleware,
 	}, handler.ConfirmBookingHandler)
-}
+}*/
