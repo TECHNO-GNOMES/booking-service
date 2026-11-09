@@ -17,7 +17,7 @@ func (p *Property) Validate() error {
 		return errors.New("property city cannot be empty")
 	}
 
-	if strings.TrimSpace(p.WorkTime.String()) == "" {
+	if p.WorkTime == nil {
 		return errors.New("property work time cannot be empty")
 	}
 

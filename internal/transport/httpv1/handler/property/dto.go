@@ -20,7 +20,7 @@ type Property struct {
 	LocationTypeID uint `json:"location_type_id"` // тип места
 	FeaturesID     uint `json:"features_id"`      // особенности
 	ServicesID     uint `json:"services_id"`      // услуги
-	EquipmentID    uint `json:"equipment_idip"`   // оборудование в наличии
+	EquipmentID    uint `json:"equipment_id"`     // оборудование в наличии
 	KitchenID      uint `json:"kitchen_id"`       // кухня
 
 	ParkingAvailable bool `json:"parking_available"` // парковка

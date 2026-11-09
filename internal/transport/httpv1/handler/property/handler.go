@@ -127,6 +127,7 @@ func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetProp
 
 	return &GetPropertyOutput{
 		Body: Property{
+			Name:              property.Name,
 			City:              property.City,
 			Address:           property.Address,
 			DistrictAddress:   property.DistrictAddress,
@@ -137,7 +138,9 @@ func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetProp
 			CategoryID:        property.CategoryID,
 			LocationTypeID:    property.LocationTypeID,
 			FeaturesID:        property.FeaturesID,
+			ServicesID:        property.ServicesID,
 			EquipmentID:       property.EquipmentID,
+			KitchenID:         property.KitchenID,
 			ParkingAvailable:  property.ParkingAvailable,
 			ParkingSpaces:     property.ParkingSpaces,
 			InteriorStyleID:   property.InteriorStyleID,
@@ -166,7 +169,9 @@ func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetProp
 			AmenitiesRoomID:   property.AmenitiesRoomID,
 			ServicesRoomID:    property.ServicesRoomID,
 			CheckInAfter:      property.CheckInAfter,
+			CheckInBefore:     property.CheckInBefore,
 			CheckOutAfter:     property.CheckOutAfter,
+			CheckOutBefore:    property.CheckOutBefore,
 			RoomName:          property.RoomName,
 			AccommodationType: string(property.AccommodationType),
 			RoomPrice:         property.RoomPrice,
