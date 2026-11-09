@@ -50,7 +50,9 @@ func (h *PropertyHandler) CreatePropertyHandler(ctx context.Context, input *Crea
 		CategoryID:        input.Body.CategoryID,
 		LocationTypeID:    input.Body.LocationTypeID,
 		FeaturesID:        input.Body.FeaturesID,
+		ServicesID:        input.Body.ServicesID,
 		EquipmentID:       input.Body.EquipmentID,
+		KitchenID:         input.Body.KitchenID,
 		ParkingAvailable:  input.Body.ParkingAvailable,
 		ParkingSpaces:     input.Body.ParkingSpaces,
 		InteriorStyleID:   input.Body.InteriorStyleID,
@@ -125,7 +127,6 @@ func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetProp
 
 	return &GetPropertyOutput{
 		Body: Property{
-			ID:                property.ID,
 			City:              property.City,
 			Address:           property.Address,
 			DistrictAddress:   property.DistrictAddress,

@@ -5,7 +5,6 @@ import (
 )
 
 type Property struct {
-	ID uint `json:"id"`
 	// 1 шаг - создание карточки
 	Name            string     `json:"name"`             // название площадки
 	City            string     `json:"city"`             // ваш город

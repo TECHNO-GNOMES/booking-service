@@ -76,5 +76,5 @@ func (p *Property) Validate() error {
 		return errors.New("owner id is required")
 	}
 
-	return errors.New("property type must be: hotel, apartment, house, or villa")
+	return nil
 }
