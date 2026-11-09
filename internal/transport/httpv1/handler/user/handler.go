@@ -29,7 +29,12 @@ func (u *UserHandler) RegisterHandler(ctx context.Context, input *RegisterInput)
 		return nil, huma.Error400BadRequest(err.Error())
 	}
 
-	token, err := u.userService.GenerateToken(createdUser.ID, createdUser.Email, createdUser.Role)
+	email := ""
+	if createdUser.Email != "" {
+		email = createdUser.Email
+	}
+
+	token, err := u.userService.GenerateToken(createdUser.ID, email, createdUser.Role)
 	if err != nil {
 		return nil, err
 	}

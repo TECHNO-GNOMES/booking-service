@@ -18,7 +18,7 @@ type UpdateUserRequest struct {
 	FirstName *string
 	LastName  *string
 	Gender    *string
-	City      *string
+	City      string
 	Birthday  *time.Time
 	Address   *string
 	Phone     *string
@@ -99,8 +99,8 @@ func (u *UserRepo) Update(ctx context.Context, id uint, req *UpdateUserRequest) 
 		updates["gender"] = *req.Gender
 	}
 
-	if req.City != nil {
-		updates["city"] = *req.City
+	if req.City != "" {
+		updates["city"] = req.City
 	}
 
 	if req.Address != nil {
