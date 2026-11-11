@@ -23,12 +23,12 @@ type Property struct {
 	OnlineScreen    bool       // онлайн показ есть/нет
 
 	// 2 шаг - создание карточки
-	CategoryID     uint // категория
-	LocationTypeID uint // тип места
-	FeaturesID     uint // особенности
-	ServicesID     uint // услуги
-	EquipmentID    uint // оборудование в наличии
-	KitchenID      uint // кухня
+	CategoryID     []uint // категория
+	LocationTypeID []uint // тип места
+	FeaturesID     []uint // особенности
+	ServicesID     []uint // услуги
+	EquipmentID    []uint // оборудование в наличии
+	KitchenID      []uint // кухня
 
 	ParkingAvailable bool // парковка
 	ParkingSpaces    int

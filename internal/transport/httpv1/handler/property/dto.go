@@ -16,12 +16,12 @@ type Property struct {
 	OnlineScreen    bool       `json:"online_screen"`    // онлайн показ есть/нет
 
 	// 2 шаг - создание карточки
-	CategoryID     uint `json:"category_id"`      // категория
-	LocationTypeID uint `json:"location_type_id"` // тип места
-	FeaturesID     uint `json:"features_id"`      // особенности
-	ServicesID     uint `json:"services_id"`      // услуги
-	EquipmentID    uint `json:"equipment_id"`     // оборудование в наличии
-	KitchenID      uint `json:"kitchen_id"`       // кухня
+	CategoryID     []uint `json:"category_id"`      // категория
+	LocationTypeID []uint `json:"location_type_id"` // тип места
+	FeaturesID     []uint `json:"features_id"`      // особенности
+	ServicesID     []uint `json:"services_id"`      // услуги
+	EquipmentID    []uint `json:"equipment_id"`     // оборудование в наличии
+	KitchenID      []uint `json:"kitchen_id"`       // кухня
 
 	ParkingAvailable bool `json:"parking_available"` // парковка
 	ParkingSpaces    int  `json:"parking_spaces"`

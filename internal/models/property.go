@@ -44,12 +44,12 @@ type Property struct {
 	OnlineScreen    bool // онлайн показ есть/нет
 
 	// 2 шаг - создание карточки
-	CategoryID     uint // категория
-	LocationTypeID uint // тип места
-	FeaturesID     uint // особенности
-	ServicesID     uint // услуги
-	EquipmentID    uint // оборудование в наличии
-	KitchenID      uint // кухня
+	CategoryID     []uint `gorm:"serializer:json;type:jsonb"` // категория
+	LocationTypeID []uint `gorm:"serializer:json;type:jsonb"` // тип места
+	FeaturesID     []uint `gorm:"serializer:json;type:jsonb"` // особенности
+	ServicesID     []uint `gorm:"serializer:json;type:jsonb"` // услуги
+	EquipmentID    []uint `gorm:"serializer:json;type:jsonb"` // оборудование в наличии
+	KitchenID      []uint `gorm:"serializer:json;type:jsonb"` // кухня
 
 	ParkingAvailable bool // парковка
 	ParkingSpaces    int
