@@ -32,27 +32,27 @@ func (p *Property) Validate() error {
 		}
 	}
 
-	if p.CategoryID == 0 {
+	if len(p.CategoryID) == 0 {
 		return errors.New("property category ID cannot be empty")
 	}
 
-	if p.LocationTypeID == 0 {
+	if len(p.LocationTypeID) == 0 {
 		return errors.New("property location type ID cannot be empty")
 	}
 
-	if p.FeaturesID == 0 {
+	if len(p.FeaturesID) == 0 {
 		return errors.New("property features ID cannot be empty")
 	}
 
-	if p.ServicesID == 0 {
+	if len(p.ServicesID) == 0 {
 		return errors.New("property services ID cannot be empty")
 	}
 
-	if p.EquipmentID == 0 {
+	if len(p.EquipmentID) == 0 {
 		return errors.New("property equipment ID cannot be empty")
 	}
 
-	if p.KitchenID == 0 {
+	if len(p.KitchenID) == 0 {
 		return errors.New("property kitchen ID cannot be empty")
 	}
 
