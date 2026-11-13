@@ -79,7 +79,7 @@ type Property struct {
 	ExtraCost         *string            // дополнительные затраты
 	ExtraInfo         *string            // дополнительно
 
-	Image string // медиатека
+	Image []string // медиатека
 
 	// номерной фонд
 	RoomCategoryID    uint              // категории номеров
