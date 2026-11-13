@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
+	"github.com/nurgal1ev/booking-service/internal/models"
 	"github.com/nurgal1ev/booking-service/internal/service/property"
 	"github.com/nurgal1ev/booking-service/internal/transport/middleware"
 )
@@ -24,27 +25,72 @@ func (h *PropertyHandler) CreatePropertyHandler(ctx context.Context, input *Crea
 		return nil, huma.Error401Unauthorized("user not authenticated")
 	}
 
-	if input.Body.Name == "" {
-		return nil, huma.Error400BadRequest("name is required")
-	}
+	/*
+		if input.Body.Name == "" {
+			return nil, huma.Error400BadRequest("name is required")
+		}
 
-	if input.Body.PricePerNight <= 0 {
-		return nil, huma.Error400BadRequest("price per night must be greater than 0")
-	}
+		if input.Body.PricePerNight <= 0 {
+			return nil, huma.Error400BadRequest("price per night must be greater than 0")
+		}
 
-	if input.Body.PropertyType == "" {
-		return nil, huma.Error400BadRequest("property type is required")
-	}
+		if input.Body.PropertyType == "" {
+			return nil, huma.Error400BadRequest("property type is required")
+		}*/
 
 	property := &property.Property{
-		Name:          input.Body.Name,
-		Description:   input.Body.Description,
-		Address:       input.Body.Address,
-		City:          input.Body.City,
-		Country:       input.Body.Country,
-		PricePerNight: input.Body.PricePerNight,
-		PropertyType:  input.Body.PropertyType,
-		OwnerID:       userID,
+		Name:              input.Body.Name,
+		City:              input.Body.City,
+		Address:           input.Body.Address,
+		DistrictAddress:   input.Body.DistrictAddress,
+		MetroAddress:      input.Body.MetroAddress,
+		WorkTime:          input.Body.WorkTime,
+		Phone:             input.Body.Phone,
+		OnlineScreen:      input.Body.OnlineScreen,
+		CategoryID:        input.Body.CategoryID,
+		LocationTypeID:    input.Body.LocationTypeID,
+		FeaturesID:        input.Body.FeaturesID,
+		ServicesID:        input.Body.ServicesID,
+		EquipmentID:       input.Body.EquipmentID,
+		KitchenID:         input.Body.KitchenID,
+		ParkingAvailable:  input.Body.ParkingAvailable,
+		ParkingSpaces:     input.Body.ParkingSpaces,
+		InteriorStyleID:   input.Body.InteriorStyleID,
+		HallName:          input.Body.HallName,
+		Area:              input.Body.Area,
+		GuestCountBanquet: input.Body.GuestCountBanquet,
+		GuestCountBuffet:  input.Body.GuestCountBuffet,
+		GuestCountTheater: input.Body.GuestCountTheater,
+		GuestCountMore:    input.Body.GuestCountMore,
+		Description:       input.Body.Description,
+		AverageCheckGuest: input.Body.AverageCheckGuest,
+		BanquetMenuCheck:  input.Body.BanquetMenuCheck,
+		BuffetMenuCheck:   input.Body.BuffetMenuCheck,
+		RentalPrice:       input.Body.RentalPrice,
+		RentalWeekDays:    input.Body.RentalWeekDays,
+		DepositMin:        input.Body.DepositMin,
+		DepositInfo:       input.Body.DepositInfo,
+		OwnAlcoholAllowed: (*models.OwnAlcoholAllowed)(&input.Body.OwnAlcoholAllowed),
+		ServiceSupport:    (*models.ServiceSupport)(&input.Body.ServiceSupport),
+		CorkageFee:        input.Body.CorkageFee,
+		ExtraCost:         input.Body.ExtraCost,
+		ExtraInfo:         input.Body.ExtraInfo,
+
+		Image: input.Body.Image,
+
+		RoomCategoryID:    input.Body.RoomCategoryID,
+		SleepingPlacesID:  input.Body.SleepingPlacesID,
+		AmenitiesRoomID:   input.Body.AmenitiesRoomID,
+		ServicesRoomID:    input.Body.ServicesRoomID,
+		CheckInAfter:      input.Body.CheckInAfter,
+		CheckInBefore:     input.Body.CheckInBefore,
+		CheckOutAfter:     input.Body.CheckOutAfter,
+		CheckOutBefore:    input.Body.CheckOutBefore,
+		RoomName:          input.Body.RoomName,
+		AccommodationType: (models.AccommodationType)(input.Body.AccommodationType),
+		RoomPrice:         input.Body.RoomPrice,
+		RoomInfo:          input.Body.RoomInfo,
+		OwnerID:           userID,
 	}
 
 	result, err := h.propertyService.Create(ctx, property)
@@ -53,13 +99,9 @@ func (h *PropertyHandler) CreatePropertyHandler(ctx context.Context, input *Crea
 	}
 
 	return &CreatePropertyOutput{
-		Body: Property{
-			Name:          result.Name,
-			Description:   result.Description,
-			Address:       result.Address,
-			PricePerNight: result.PricePerNight,
-			PropertyType:  result.PropertyType,
-		},
+		Body: struct {
+			ID uint `json:"id"`
+		}{ID: result.ID},
 	}, nil
 }
 
@@ -73,27 +115,67 @@ func (h *PropertyHandler) GetPropertyHandler(ctx context.Context, input *GetProp
 		return nil, huma.Error404NotFound("property not found")
 	}
 
-	unitsDTOs := make([]*PropertyUnitDTO, len(property.Units))
-	for i, unit := range property.Units {
-		unitsDTOs[i] = &PropertyUnitDTO{
-			ID:            unit.ID,
-			Name:          unit.Name,
-			Description:   unit.Description,
-			PricePerNight: unit.PricePerNight,
-			Capacity:      unit.Capacity,
-			IsAvailable:   unit.IsAvailable,
-		}
+	var ownAlcoholAllowed string
+	if property.OwnAlcoholAllowed != nil {
+		ownAlcoholAllowed = string(*property.OwnAlcoholAllowed)
+	}
+
+	var serviceSupport string
+	if property.ServiceSupport != nil {
+		serviceSupport = string(*property.ServiceSupport)
 	}
 
 	return &GetPropertyOutput{
 		Body: Property{
-			ID:            property.ID,
-			Name:          property.Name,
-			Description:   property.Description,
-			Address:       property.Address,
-			PricePerNight: property.PricePerNight,
-			PropertyType:  property.PropertyType,
-			Units:         unitsDTOs,
+			Name:              property.Name,
+			City:              property.City,
+			Address:           property.Address,
+			DistrictAddress:   property.DistrictAddress,
+			MetroAddress:      property.MetroAddress,
+			WorkTime:          property.WorkTime,
+			Phone:             property.Phone,
+			OnlineScreen:      property.OnlineScreen,
+			CategoryID:        property.CategoryID,
+			LocationTypeID:    property.LocationTypeID,
+			FeaturesID:        property.FeaturesID,
+			ServicesID:        property.ServicesID,
+			EquipmentID:       property.EquipmentID,
+			KitchenID:         property.KitchenID,
+			ParkingAvailable:  property.ParkingAvailable,
+			ParkingSpaces:     property.ParkingSpaces,
+			InteriorStyleID:   property.InteriorStyleID,
+			HallName:          property.HallName,
+			Area:              property.Area,
+			GuestCountBanquet: property.GuestCountBanquet,
+			GuestCountBuffet:  property.GuestCountBuffet,
+			GuestCountTheater: property.GuestCountTheater,
+			GuestCountMore:    property.GuestCountMore,
+			Description:       property.Description,
+			AverageCheckGuest: property.AverageCheckGuest,
+			BanquetMenuCheck:  property.BanquetMenuCheck,
+			BuffetMenuCheck:   property.BuffetMenuCheck,
+			RentalPrice:       property.RentalPrice,
+			RentalWeekDays:    property.RentalWeekDays,
+			DepositMin:        property.DepositMin,
+			DepositInfo:       property.DepositInfo,
+			OwnAlcoholAllowed: ownAlcoholAllowed,
+			ServiceSupport:    serviceSupport,
+			CorkageFee:        property.CorkageFee,
+			ExtraCost:         property.ExtraCost,
+			ExtraInfo:         property.ExtraInfo,
+			Image:             property.Image,
+			RoomCategoryID:    property.RoomCategoryID,
+			SleepingPlacesID:  property.SleepingPlacesID,
+			AmenitiesRoomID:   property.AmenitiesRoomID,
+			ServicesRoomID:    property.ServicesRoomID,
+			CheckInAfter:      property.CheckInAfter,
+			CheckInBefore:     property.CheckInBefore,
+			CheckOutAfter:     property.CheckOutAfter,
+			CheckOutBefore:    property.CheckOutBefore,
+			RoomName:          property.RoomName,
+			AccommodationType: string(property.AccommodationType),
+			RoomPrice:         property.RoomPrice,
+			RoomInfo:          property.RoomInfo,
 		},
 	}, nil
 }
@@ -132,11 +214,8 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 
 	return &UpdatePropertyOutput{
 		Body: Property{
-			Name:          updatedProperty.Name,
-			Description:   updatedProperty.Description,
-			Address:       updatedProperty.Address,
-			PricePerNight: updatedProperty.PricePerNight,
-			PropertyType:  updatedProperty.PropertyType,
+			Name:        updatedProperty.Name,
+			Description: updatedProperty.Description,
 		},
 	}, nil
 }

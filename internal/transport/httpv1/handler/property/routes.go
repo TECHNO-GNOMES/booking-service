@@ -25,9 +25,9 @@ func RegisterRoutes(api huma.API, handler *PropertyHandler, authSecret string) {
 	huma.Register(api, huma.Operation{
 		Method:      http.MethodGet,
 		Path:        "/api/v1/properties/{id}",
-		Summary:     "Получить объект недвижимости",
+		Summary:     "Получить объект для брони",
 		Tags:        []string{"Properties"},
-		Description: "Возвращает объект недвижимости по ID",
+		Description: "Возвращает объект для брони по ID",
 	}, handler.GetPropertyHandler)
 
 	huma.Register(api, huma.Operation{

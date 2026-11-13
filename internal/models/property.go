@@ -1,18 +1,101 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
+type OwnAlcoholAllowed string
+type ServiceSupport string
+type AccommodationType string
+
+const (
+	YesAlcohol OwnAlcoholAllowed = "yes"
+	NoAlcohol  OwnAlcoholAllowed = "no"
+	Half       OwnAlcoholAllowed = "half"
+	Agreement  OwnAlcoholAllowed = "agreement"
+)
+
+const (
+	TenPercent     ServiceSupport = "ten_percent"
+	FifteenPercent ServiceSupport = "fifteen_percent"
+	NoService      ServiceSupport = "no"
+	OtherService   ServiceSupport = "other"
+)
+
+const (
+	SingleBed AccommodationType = "single_bed"
+	DoubleBed AccommodationType = "double_bed"
+	TripleBed AccommodationType = "triple_bed"
+	OtherBed  AccommodationType = "other_bed"
+)
 
 type Property struct {
 	gorm.Model
-	Name          string
-	Description   string
-	Address       string
-	City          string
-	Country       string
-	PricePerNight int
-	PropertyType  string `gorm:"default:hotel"`
+	// 1 шаг - создание карточки
+	Name            string     // название площадки
+	City            string     // ваш город
+	Address         *string    // адрес площадки
+	DistrictAddress *string    // район
+	MetroAddress    *string    // метро
+	WorkTime        *time.Time // время работы
+	Phone           string
+	OnlineScreen    bool // онлайн показ есть/нет
 
-	Units []Unit `gorm:"foreignKey:PropertyID"`
+	// 2 шаг - создание карточки
+	CategoryID     []uint `gorm:"serializer:json;type:jsonb"` // категория
+	LocationTypeID []uint `gorm:"serializer:json;type:jsonb"` // тип места
+	FeaturesID     []uint `gorm:"serializer:json;type:jsonb"` // особенности
+	ServicesID     []uint `gorm:"serializer:json;type:jsonb"` // услуги
+	EquipmentID    []uint `gorm:"serializer:json;type:jsonb"` // оборудование в наличии
+	KitchenID      []uint `gorm:"serializer:json;type:jsonb"` // кухня
+
+	ParkingAvailable bool // парковка
+	ParkingSpaces    int
+
+	InteriorStyleID *uint // стиль интерьера
+
+	// залы
+	HallName          *string // название зала
+	Area              *string // площадь зала кв. м.
+	GuestCountBanquet *int    // кол-во мест банкет
+	GuestCountBuffet  *int    // кол-во мест фуршет
+	GuestCountTheater *int    // кол-во мест рассадка театр
+	GuestCountMore    *int    // кол-во мест/еще
+	Description       string  // описание площадки
+
+	// цены
+	AverageCheckGuest *int               // средний чек на гостя (сумма в рублях)
+	BanquetMenuCheck  *int               // банкетное меню на гостя (сумма в рублях)
+	BuffetMenuCheck   *int               // фуршетное меню на гостя (сумма в рублях)
+	RentalPrice       *int               // аренда/час
+	RentalWeekDays    *int               // аренда площадка под мероприятия в будни/выходные и праздничные дни
+	DepositMin        *string            // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
+	DepositInfo       *string            // что входит в депозит
+	OwnAlcoholAllowed *OwnAlcoholAllowed // возможность своего алкоголя
+	ServiceSupport    *ServiceSupport    // сервисное обслуживание
+	CorkageFee        *string            // пробковый сбор
+	ExtraCost         *string            // дополнительные затраты
+	ExtraInfo         *string            // дополнительно
+
+	Image []string // медиатека
+
+	// номерной фонд
+	RoomCategoryID    uint              // категории номеров
+	SleepingPlacesID  uint              // спальные места
+	AmenitiesRoomID   uint              // удобство в номерах
+	ServicesRoomID    uint              // услуги
+	CheckInAfter      *time.Time        //время заезда (от)
+	CheckInBefore     *time.Time        //время заезда (до)
+	CheckOutAfter     *time.Time        //время выезда (от)
+	CheckOutBefore    *time.Time        //время выезда (до)
+	RoomName          *string           // название
+	AccommodationType AccommodationType // тип размещения
+	RoomPrice         *int              // цена
+	RoomInfo          *string           // дополнительно
+
+	Reviews []Review `gorm:"foreignkey:PropertyID"`
 
 	OwnerID uint
 	Owner   User `gorm:"foreignKey:OwnerID"`

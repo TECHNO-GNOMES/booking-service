@@ -17,13 +17,13 @@ func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
 }
 
 type PropertyFilter struct {
-	City         string
-	Country      string
-	PropertyType string
-	MinPrice     int
-	MaxPrice     int
-	Search       string
-	OwnerID      uint
+	Search         string
+	CategoryID     uint
+	LocationTypeID uint
+	GuestCountMin  *int
+	MinPrice       *int
+	MaxPrice       *int
+	City           string
 }
 
 type UpdatePropertyRequest struct {
@@ -43,7 +43,7 @@ func (p *PropertyRepo) Create(ctx context.Context, property *models.Property) er
 
 func (p *PropertyRepo) FindByID(ctx context.Context, id uint) (*models.Property, error) {
 	var property models.Property
-	err := p.db.WithContext(ctx).Preload("Units", nil).Where("id = ?", id).First(&property).Error
+	err := p.db.WithContext(ctx).Preload("Reviews", nil).Where("id = ?", id).First(&property).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -53,23 +53,34 @@ func (p *PropertyRepo) FindByID(ctx context.Context, id uint) (*models.Property,
 	return &property, nil
 }
 
-func (p *PropertyRepo) FindAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
-	query := p.db.WithContext(ctx).Model(&models.Property{})
+func (r *PropertyRepo) FindAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
+	query := r.db.WithContext(ctx).Model(&models.Property{})
+
+	if filter.Search != "" {
+		query = query.Where("name ILIKE ?", "%"+filter.Search+"%")
+	}
+
+	if filter.CategoryID > 0 {
+		query = query.Where("category_id = ?", filter.CategoryID)
+	}
+
+	if filter.LocationTypeID > 0 {
+		query = query.Where("location_type_id = ?", filter.LocationTypeID)
+	}
 
 	if filter.City != "" {
 		query = query.Where("city = ?", filter.City)
 	}
-	if filter.PropertyType != "" {
-		query = query.Where("property_type = ?", filter.PropertyType)
+
+	if filter.GuestCountMin != nil {
+		query = query.Where("guest_count_banquet >= ?", *filter.GuestCountMin)
 	}
-	if filter.MinPrice > 0 {
-		query = query.Where("price_per_night >= ?", filter.MinPrice)
+
+	if filter.MinPrice != nil {
+		query = query.Where("rental_price >= ?", *filter.MinPrice)
 	}
-	if filter.MaxPrice > 0 {
-		query = query.Where("price_per_night <= ?", filter.MaxPrice)
-	}
-	if filter.Search != "" {
-		query = query.Where("name ILIKE ?", "%"+filter.Search+"%")
+	if filter.MaxPrice != nil {
+		query = query.Where("rental_price <= ?", *filter.MaxPrice)
 	}
 
 	var properties []models.Property
