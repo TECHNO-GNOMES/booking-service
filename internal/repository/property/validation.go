@@ -125,7 +125,7 @@ func validationUpdates(req *UpdatePropertyRequest) map[string]any {
 	}
 
 	if req.CorkageFee != nil {
-		updates["cockage_fee"] = *req.CorkageFee
+		updates["corkage_fee"] = *req.CorkageFee
 	}
 
 	if req.ExtraCost != nil {
@@ -184,8 +184,8 @@ func validationUpdates(req *UpdatePropertyRequest) map[string]any {
 		updates["room_info"] = *req.RoomInfo
 	}
 
-	if req.image != nil {
-		updates["image"] = *req.image
+	if req.Image != nil {
+		updates["image"] = *req.Image
 	}
 
 	return updates

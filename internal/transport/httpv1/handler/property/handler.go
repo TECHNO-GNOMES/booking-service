@@ -198,13 +198,50 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 	}
 
 	req := &property.UpdatePropertyRequest{
-		Name:          input.Body.Name,
-		Description:   input.Body.Description,
-		Address:       input.Body.Address,
-		City:          input.Body.City,
-		Country:       input.Body.Country,
-		PricePerNight: input.Body.PricePerNight,
-		PropertyType:  input.Body.PropertyType,
+		Name:              input.Body.Name,
+		City:              input.Body.City,
+		Address:           input.Body.Address,
+		WorkTime:          input.Body.WorkTime,
+		Phone:             input.Body.Phone,
+		OnlineScreen:      input.Body.OnlineScreen,
+		CategoryID:        input.Body.CategoryID,
+		LocationTypeID:    input.Body.LocationTypeID,
+		FeaturesID:        input.Body.FeaturesID,
+		ServicesID:        input.Body.ServicesID,
+		EquipmentID:       input.Body.EquipmentID,
+		KitchenID:         input.Body.KitchenID,
+		ParkingAvailable:  input.Body.ParkingAvailable,
+		ParkingSpaces:     input.Body.ParkingSpaces,
+		InteriorStyleID:   input.Body.InteriorStyleID,
+		HallName:          input.Body.HallName,
+		Area:              input.Body.Area,
+		GuestCountBanquet: input.Body.GuestCountBanquet,
+		GuestCountBuffet:  input.Body.GuestCountBuffet,
+		GuestCountTheater: input.Body.GuestCountTheater,
+		GuestCountMore:    input.Body.GuestCountMore,
+		Description:       input.Body.Description,
+		AverageCheckGuest: input.Body.AverageCheckGuest,
+		BanquetMenuCheck:  input.Body.BanquetMenuCheck,
+		BuffetMenuCheck:   input.Body.BuffetMenuCheck,
+		RentalPrice:       input.Body.RentalPrice,
+		RentalWeekDays:    input.Body.RentalWeekDays,
+		DepositMin:        input.Body.DepositMin,
+		DepositInfo:       input.Body.DepositInfo,
+		OwnAlcoholAllowed: (*models.OwnAlcoholAllowed)(input.Body.OwnAlcoholAllowed),
+		ServiceSupport:    (*models.ServiceSupport)(input.Body.ServiceSupport),
+		CorkageFee:        input.Body.CorkageFee,
+		ExtraCost:         input.Body.ExtraCost,
+		ExtraInfo:         input.Body.ExtraInfo,
+		RoomCategoryID:    input.Body.RoomCategoryID,
+		SleepingPlacesID:  input.Body.SleepingPlacesID,
+		AmenitiesRoomID:   input.Body.AmenitiesRoomID,
+		ServicesRoomID:    input.Body.ServicesRoomID,
+		CheckInAfter:      input.Body.CheckInAfter,
+		CheckInBefore:     input.Body.CheckInBefore,
+		CheckOutAfter:     input.Body.CheckOutAfter,
+		CheckOutBefore:    input.Body.CheckOutBefore,
+		RoomName:          input.Body.RoomName,
+		Image:             input.Body.Image,
 	}
 
 	updatedProperty, err := h.propertyService.Update(ctx, input.ID, userID, userRole, req)
@@ -212,10 +249,67 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 		return nil, huma.Error400BadRequest(err.Error())
 	}
 
+	var ownAlcohol string
+	if updatedProperty.OwnAlcoholAllowed != nil {
+		ownAlcohol = string(*updatedProperty.OwnAlcoholAllowed)
+	}
+
+	var serviceSupport string
+	if updatedProperty.ServiceSupport != nil {
+		serviceSupport = string(*updatedProperty.ServiceSupport)
+	}
+
 	return &UpdatePropertyOutput{
 		Body: Property{
-			Name:        updatedProperty.Name,
-			Description: updatedProperty.Description,
+			Name:              updatedProperty.Name,
+			City:              updatedProperty.City,
+			Address:           updatedProperty.Address,
+			DistrictAddress:   updatedProperty.DistrictAddress,
+			MetroAddress:      updatedProperty.MetroAddress,
+			WorkTime:          updatedProperty.WorkTime,
+			Phone:             updatedProperty.Phone,
+			OnlineScreen:      updatedProperty.OnlineScreen,
+			CategoryID:        updatedProperty.CategoryID,
+			LocationTypeID:    updatedProperty.LocationTypeID,
+			FeaturesID:        updatedProperty.FeaturesID,
+			ServicesID:        updatedProperty.ServicesID,
+			EquipmentID:       updatedProperty.EquipmentID,
+			KitchenID:         updatedProperty.KitchenID,
+			ParkingAvailable:  updatedProperty.ParkingAvailable,
+			ParkingSpaces:     updatedProperty.ParkingSpaces,
+			InteriorStyleID:   updatedProperty.InteriorStyleID,
+			HallName:          updatedProperty.HallName,
+			Area:              updatedProperty.Area,
+			GuestCountBanquet: updatedProperty.GuestCountBanquet,
+			GuestCountBuffet:  updatedProperty.GuestCountBuffet,
+			GuestCountTheater: updatedProperty.GuestCountTheater,
+			GuestCountMore:    updatedProperty.GuestCountMore,
+			Description:       updatedProperty.Description,
+			AverageCheckGuest: updatedProperty.AverageCheckGuest,
+			BanquetMenuCheck:  updatedProperty.BanquetMenuCheck,
+			BuffetMenuCheck:   updatedProperty.BuffetMenuCheck,
+			RentalPrice:       updatedProperty.RentalPrice,
+			RentalWeekDays:    updatedProperty.RentalWeekDays,
+			DepositMin:        updatedProperty.DepositMin,
+			DepositInfo:       updatedProperty.DepositInfo,
+			OwnAlcoholAllowed: ownAlcohol,
+			ServiceSupport:    serviceSupport,
+			CorkageFee:        updatedProperty.CorkageFee,
+			ExtraCost:         updatedProperty.ExtraCost,
+			ExtraInfo:         updatedProperty.ExtraInfo,
+			Image:             updatedProperty.Image,
+			RoomCategoryID:    updatedProperty.RoomCategoryID,
+			SleepingPlacesID:  updatedProperty.SleepingPlacesID,
+			AmenitiesRoomID:   updatedProperty.AmenitiesRoomID,
+			ServicesRoomID:    updatedProperty.ServicesRoomID,
+			CheckInAfter:      updatedProperty.CheckInAfter,
+			CheckInBefore:     updatedProperty.CheckInBefore,
+			CheckOutAfter:     updatedProperty.CheckOutAfter,
+			CheckOutBefore:    updatedProperty.CheckOutBefore,
+			RoomName:          updatedProperty.RoomName,
+			AccommodationType: string(updatedProperty.AccommodationType),
+			RoomPrice:         updatedProperty.RoomPrice,
+			RoomInfo:          updatedProperty.RoomInfo,
 		},
 	}, nil
 }

@@ -79,7 +79,7 @@ type Property struct {
 	ExtraCost         *string            // дополнительные затраты
 	ExtraInfo         *string            // дополнительно
 
-	Image []string // медиатека
+	Image []string `gorm:"serializer:json;type:jsonb"` // медиатека
 
 	// номерной фонд
 	RoomCategoryID    uint              // категории номеров

@@ -3,98 +3,11 @@ package property
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"github.com/nurgal1ev/booking-service/internal/repository/property"
 	"github.com/nurgal1ev/booking-service/internal/repository/user"
 )
-
-type Property struct {
-	ID uint
-	// 1 шаг - создание карточки
-	Name            string     // название площадки
-	City            string     // ваш город
-	Address         *string    // адрес площадки
-	DistrictAddress *string    // район
-	MetroAddress    *string    // метро
-	WorkTime        *time.Time // время работы
-	Phone           string     // номер телефона
-	OnlineScreen    bool       // онлайн показ есть/нет
-
-	// 2 шаг - создание карточки
-	CategoryID     []uint // категория
-	LocationTypeID []uint // тип места
-	FeaturesID     []uint // особенности
-	ServicesID     []uint // услуги
-	EquipmentID    []uint // оборудование в наличии
-	KitchenID      []uint // кухня
-
-	ParkingAvailable bool // парковка
-	ParkingSpaces    int
-
-	InteriorStyleID *uint // стиль интерьера
-
-	// залы
-	HallName          *string // название зала
-	Area              *string // площадь зала кв. м.
-	GuestCountBanquet *int    // кол-во мест банкет
-	GuestCountBuffet  *int    // кол-во мест фуршет
-	GuestCountTheater *int    // кол-во мест рассадка театр
-	GuestCountMore    *int    // кол-во мест/еще
-	Description       string  // описание площадки
-
-	// цены
-	AverageCheckGuest *int                      // средний чек на гостя (сумма в рублях)
-	BanquetMenuCheck  *int                      // банкетное меню на гостя (сумма в рублях)
-	BuffetMenuCheck   *int                      // фуршетное меню на гостя (сумма в рублях)
-	RentalPrice       *int                      // аренда/час
-	RentalWeekDays    *int                      // аренда площадка под мероприятия в будни/выходные и праздничные дни
-	DepositMin        *string                   // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
-	DepositInfo       *string                   // что входит в депозит
-	OwnAlcoholAllowed *models.OwnAlcoholAllowed // возможность своего алкоголя
-	ServiceSupport    *models.ServiceSupport    // сервисное обслуживание
-	CorkageFee        *string                   // пробковый сбор
-	ExtraCost         *string                   // дополнительные затраты
-	ExtraInfo         *string                   // дополнительно
-
-	Image string // медиатека
-
-	// номерной фонд
-	RoomCategoryID    uint                     // категории номеров
-	SleepingPlacesID  uint                     // спальные места
-	AmenitiesRoomID   uint                     // удобство в номерах
-	ServicesRoomID    uint                     // услуги
-	CheckInAfter      *time.Time               //время заезда (от)
-	CheckInBefore     *time.Time               //время заезда (до)
-	CheckOutAfter     *time.Time               //время выезда (от)
-	CheckOutBefore    *time.Time               //время выезда (до)
-	RoomName          *string                  // название
-	AccommodationType models.AccommodationType // тип размещения
-	RoomPrice         *int                     // цена
-	RoomInfo          *string                  // дополнительно
-	OwnerID           uint
-}
-
-type PropertyFilter struct {
-	Search         string
-	CategoryID     uint
-	LocationTypeID uint
-	GuestCountMin  *int
-	MinPrice       *int
-	MaxPrice       *int
-	City           string
-}
-
-type UpdatePropertyRequest struct {
-	Name          *string
-	Description   *string
-	Address       *string
-	City          *string
-	Country       *string
-	PricePerNight *int
-	PropertyType  *string
-}
 
 type PropertyService struct {
 	propertyRepo *property.PropertyRepo
@@ -251,13 +164,54 @@ func (s *PropertyService) Update(ctx context.Context, id uint, userID uint, user
 	}
 
 	request := &property.UpdatePropertyRequest{
-		Name:          req.Name,
-		Description:   req.Description,
-		Address:       req.Address,
-		City:          req.City,
-		Country:       req.Country,
-		PricePerNight: req.PricePerNight,
-		PropertyType:  req.PropertyType,
+		Name:         req.Name,
+		City:         req.City,
+		Address:      req.Address,
+		WorkTime:     req.WorkTime,
+		Phone:        req.Phone,
+		OnlineScreen: req.OnlineScreen,
+
+		CategoryID:     req.CategoryID,
+		LocationTypeID: req.LocationTypeID,
+		FeaturesID:     req.FeaturesID,
+		ServicesID:     req.ServicesID,
+		KitchenID:      req.KitchenID,
+
+		ParkingAvailable:  req.ParkingAvailable,
+		ParkingSpaces:     req.ParkingSpaces,
+		InteriorStyleID:   req.InteriorStyleID,
+		HallName:          req.HallName,
+		Area:              req.Area,
+		GuestCountBanquet: req.GuestCountBanquet,
+		GuestCountBuffet:  req.GuestCountBuffet,
+		GuestCountTheater: req.GuestCountTheater,
+		GuestCountMore:    req.GuestCountMore,
+		Description:       req.Description,
+		AverageCheckGuest: req.AverageCheckGuest,
+		BanquetMenuCheck:  req.BanquetMenuCheck,
+		BuffetMenuCheck:   req.BuffetMenuCheck,
+		RentalPrice:       req.RentalPrice,
+		RentalWeekDays:    req.RentalWeekDays,
+		DepositMin:        req.DepositMin,
+		DepositInfo:       req.DepositInfo,
+		OwnAlcoholAllowed: req.OwnAlcoholAllowed,
+		ServiceSupport:    req.ServiceSupport,
+		CorkageFee:        req.CorkageFee,
+		ExtraCost:         req.ExtraCost,
+		ExtraInfo:         req.ExtraInfo,
+		RoomCategoryID:    req.RoomCategoryID,
+		SleepingPlacesID:  req.SleepingPlacesID,
+		AmenitiesRoomID:   req.AmenitiesRoomID,
+		ServicesRoomID:    req.ServicesRoomID,
+		CheckInAfter:      req.CheckInAfter,
+		CheckInBefore:     req.CheckInBefore,
+		CheckOutAfter:     req.CheckOutAfter,
+		CheckOutBefore:    req.CheckOutBefore,
+		RoomName:          req.RoomName,
+		AccommodationType: req.AccommodationType,
+		RoomPrice:         req.RoomPrice,
+		RoomInfo:          req.RoomInfo,
+		Image:             req.Image,
 	}
 
 	err = s.propertyRepo.Update(ctx, id, request)
