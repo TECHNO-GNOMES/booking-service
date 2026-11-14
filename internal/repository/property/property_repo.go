@@ -82,7 +82,7 @@ type UpdatePropertyRequest struct {
 	RoomPrice         *int                      // цена
 	RoomInfo          *string                   // дополнительно
 
-	Image *[]string
+	Image *models.Image
 }
 
 func (p *PropertyRepo) Create(ctx context.Context, property *models.Property) error {

@@ -31,6 +31,8 @@ const (
 	OtherBed  AccommodationType = "other_bed"
 )
 
+type Image []string
+
 type Property struct {
 	gorm.Model
 	// 1 шаг - создание карточки
@@ -79,7 +81,7 @@ type Property struct {
 	ExtraCost         *string            // дополнительные затраты
 	ExtraInfo         *string            // дополнительно
 
-	Image []string `gorm:"serializer:json;type:jsonb"` // медиатека
+	Image Image `gorm:"serializer:json"` // медиатека
 
 	// номерной фонд
 	RoomCategoryID    uint              // категории номеров

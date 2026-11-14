@@ -241,7 +241,7 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 		CheckOutAfter:     input.Body.CheckOutAfter,
 		CheckOutBefore:    input.Body.CheckOutBefore,
 		RoomName:          input.Body.RoomName,
-		Image:             input.Body.Image,
+		Image:             (*models.Image)(input.Body.Image),
 	}
 
 	updatedProperty, err := h.propertyService.Update(ctx, input.ID, userID, userRole, req)

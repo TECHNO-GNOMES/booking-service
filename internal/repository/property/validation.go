@@ -1,7 +1,9 @@
 package property
 
-func validationUpdates(req *UpdatePropertyRequest) map[string]any {
-	updates := make(map[string]any)
+import "encoding/json"
+
+func validationUpdates(req *UpdatePropertyRequest) map[string]interface{} {
+	updates := make(map[string]interface{})
 
 	if req.Name != nil {
 		updates["name"] = *req.Name
@@ -185,7 +187,8 @@ func validationUpdates(req *UpdatePropertyRequest) map[string]any {
 	}
 
 	if req.Image != nil {
-		updates["image"] = *req.Image
+		jsonData, _ := json.Marshal(*req.Image)
+		updates["image"] = string(jsonData)
 	}
 
 	return updates

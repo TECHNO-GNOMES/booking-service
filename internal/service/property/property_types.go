@@ -137,5 +137,5 @@ type UpdatePropertyRequest struct {
 	RoomPrice         *int                      // цена
 	RoomInfo          *string                   // дополнительно
 
-	Image *[]string
+	Image *models.Image
 }
