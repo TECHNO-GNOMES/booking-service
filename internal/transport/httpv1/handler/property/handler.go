@@ -25,19 +25,6 @@ func (h *PropertyHandler) CreatePropertyHandler(ctx context.Context, input *Crea
 		return nil, huma.Error401Unauthorized("user not authenticated")
 	}
 
-	/*
-		if input.Body.Name == "" {
-			return nil, huma.Error400BadRequest("name is required")
-		}
-
-		if input.Body.PricePerNight <= 0 {
-			return nil, huma.Error400BadRequest("price per night must be greater than 0")
-		}
-
-		if input.Body.PropertyType == "" {
-			return nil, huma.Error400BadRequest("property type is required")
-		}*/
-
 	property := &property.Property{
 		Name:              input.Body.Name,
 		City:              input.Body.City,
