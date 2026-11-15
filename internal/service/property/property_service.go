@@ -3,44 +3,11 @@ package property
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"github.com/nurgal1ev/booking-service/internal/repository/property"
 	"github.com/nurgal1ev/booking-service/internal/repository/user"
 )
-
-type Property struct {
-	ID            uint
-	Name          string
-	Description   string
-	Address       string
-	City          string
-	Country       string
-	PricePerNight int
-	PropertyType  string
-	OwnerID       uint
-}
-
-type PropertyFilter struct {
-	City         string
-	Country      string
-	PropertyType string
-	MinPrice     int
-	MaxPrice     int
-	Search       string
-	OwnerID      uint
-}
-
-type UpdatePropertyRequest struct {
-	Name          *string
-	Description   *string
-	Address       *string
-	City          *string
-	Country       *string
-	PricePerNight *int
-	PropertyType  *string
-}
 
 type PropertyService struct {
 	propertyRepo *property.PropertyRepo
@@ -52,28 +19,6 @@ func NewPropertyService(propertyRepo *property.PropertyRepo, userRepo *user.User
 		propertyRepo: propertyRepo,
 		userRepo:     userRepo,
 	}
-}
-
-func (p *Property) Validate() error {
-	if strings.TrimSpace(p.Name) == "" {
-		return errors.New("property name cannot be empty")
-	}
-
-	if p.PricePerNight <= 0 {
-		return errors.New("price per night must be greater than zero")
-	}
-
-	if p.OwnerID == 0 {
-		return errors.New("owner id is required")
-	}
-
-	validTypes := []string{"hotel", "apartment", "house", "villa"}
-	for _, t := range validTypes {
-		if p.PropertyType == t {
-			return nil
-		}
-	}
-	return errors.New("property type must be: hotel, apartment, house, or villa")
 }
 
 func (s *PropertyService) Create(ctx context.Context, p *Property) (*models.Property, error) {
@@ -91,14 +36,56 @@ func (s *PropertyService) Create(ctx context.Context, p *Property) (*models.Prop
 	}
 
 	var property = models.Property{
-		Name:          p.Name,
-		Description:   p.Description,
-		Address:       p.Address,
-		City:          p.City,
-		Country:       p.Country,
-		PricePerNight: p.PricePerNight,
-		PropertyType:  p.PropertyType,
-		OwnerID:       p.OwnerID,
+		Name:              p.Name,
+		City:              p.City,
+		Address:           p.Address,
+		DistrictAddress:   p.DistrictAddress,
+		MetroAddress:      p.MetroAddress,
+		WorkTime:          p.WorkTime,
+		Phone:             p.Phone,
+		OnlineScreen:      p.OnlineScreen,
+		CategoryID:        p.CategoryID,
+		LocationTypeID:    p.LocationTypeID,
+		FeaturesID:        p.FeaturesID,
+		ServicesID:        p.ServicesID,
+		EquipmentID:       p.EquipmentID,
+		KitchenID:         p.KitchenID,
+		ParkingAvailable:  p.ParkingAvailable,
+		ParkingSpaces:     p.ParkingSpaces,
+		InteriorStyleID:   p.InteriorStyleID,
+		HallName:          p.HallName,
+		Area:              p.Area,
+		GuestCountBanquet: p.GuestCountBanquet,
+		GuestCountBuffet:  p.GuestCountBuffet,
+		GuestCountTheater: p.GuestCountTheater,
+		GuestCountMore:    p.GuestCountMore,
+		Description:       p.Description,
+		AverageCheckGuest: p.AverageCheckGuest,
+		BanquetMenuCheck:  p.BanquetMenuCheck,
+		BuffetMenuCheck:   p.BuffetMenuCheck,
+		RentalPrice:       p.RentalPrice,
+		RentalWeekDays:    p.RentalWeekDays,
+		DepositMin:        p.DepositMin,
+		DepositInfo:       p.DepositInfo,
+		OwnAlcoholAllowed: p.OwnAlcoholAllowed,
+		ServiceSupport:    p.ServiceSupport,
+		CorkageFee:        p.CorkageFee,
+		ExtraCost:         p.ExtraCost,
+		ExtraInfo:         p.ExtraInfo,
+		Image:             p.Image,
+		RoomCategoryID:    p.RoomCategoryID,
+		SleepingPlacesID:  p.SleepingPlacesID,
+		AmenitiesRoomID:   p.AmenitiesRoomID,
+		ServicesRoomID:    p.ServicesRoomID,
+		CheckInAfter:      p.CheckInAfter,
+		CheckInBefore:     p.CheckInBefore,
+		CheckOutAfter:     p.CheckOutAfter,
+		CheckOutBefore:    p.CheckOutBefore,
+		RoomName:          p.RoomName,
+		AccommodationType: p.AccommodationType,
+		RoomPrice:         p.RoomPrice,
+		RoomInfo:          p.RoomInfo,
+		OwnerID:           p.OwnerID,
 	}
 
 	err = s.propertyRepo.Create(ctx, &property)
@@ -127,34 +114,35 @@ func (s *PropertyService) GetById(ctx context.Context, id uint) (*models.Propert
 }
 
 func (s *PropertyService) GetAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
-	if filter.MinPrice > filter.MaxPrice {
-		return nil, errors.New("minPrice cannot be greater than maxPrice")
-	}
-
-	if filter.PropertyType != "" {
-		validTypes := []string{"hotel", "apartment", "house", "camping"}
-		isValid := false
-		for _, t := range validTypes {
-			if filter.PropertyType == t {
-				isValid = true
-				break
-			}
-		}
-		if !isValid {
-			return nil, errors.New("invalid property type. Allowed: hotel, apartment, house, camping")
+	if filter.MinPrice != nil && filter.MaxPrice != nil {
+		if *filter.MinPrice > *filter.MaxPrice {
+			return nil, errors.New("minPrice cannot be greater than maxPrice")
 		}
 	}
 
-	result := property.PropertyFilter{
-		City:         filter.City,
-		Country:      filter.Country,
-		PropertyType: filter.PropertyType,
-		MinPrice:     filter.MinPrice,
-		MaxPrice:     filter.MaxPrice,
-		Search:       filter.Search,
+	if filter.CategoryID > 0 {
+		if _, ok := models.Category[filter.CategoryID]; !ok {
+			return nil, errors.New("invalid category ID")
+		}
 	}
 
-	properties, err := s.propertyRepo.FindAll(ctx, result)
+	if filter.LocationTypeID > 0 {
+		if _, ok := models.LocationType[filter.LocationTypeID]; !ok {
+			return nil, errors.New("invalid location type ID")
+		}
+	}
+
+	repoFilter := property.PropertyFilter{
+		Search:         filter.Search,
+		CategoryID:     filter.CategoryID,
+		LocationTypeID: filter.LocationTypeID,
+		GuestCountMin:  filter.GuestCountMin,
+		MinPrice:       filter.MinPrice,
+		MaxPrice:       filter.MaxPrice,
+		City:           filter.City,
+	}
+
+	properties, err := s.propertyRepo.FindAll(ctx, repoFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -176,13 +164,54 @@ func (s *PropertyService) Update(ctx context.Context, id uint, userID uint, user
 	}
 
 	request := &property.UpdatePropertyRequest{
-		Name:          req.Name,
-		Description:   req.Description,
-		Address:       req.Address,
-		City:          req.City,
-		Country:       req.Country,
-		PricePerNight: req.PricePerNight,
-		PropertyType:  req.PropertyType,
+		Name:         req.Name,
+		City:         req.City,
+		Address:      req.Address,
+		WorkTime:     req.WorkTime,
+		Phone:        req.Phone,
+		OnlineScreen: req.OnlineScreen,
+
+		CategoryID:     req.CategoryID,
+		LocationTypeID: req.LocationTypeID,
+		FeaturesID:     req.FeaturesID,
+		ServicesID:     req.ServicesID,
+		KitchenID:      req.KitchenID,
+
+		ParkingAvailable:  req.ParkingAvailable,
+		ParkingSpaces:     req.ParkingSpaces,
+		InteriorStyleID:   req.InteriorStyleID,
+		HallName:          req.HallName,
+		Area:              req.Area,
+		GuestCountBanquet: req.GuestCountBanquet,
+		GuestCountBuffet:  req.GuestCountBuffet,
+		GuestCountTheater: req.GuestCountTheater,
+		GuestCountMore:    req.GuestCountMore,
+		Description:       req.Description,
+		AverageCheckGuest: req.AverageCheckGuest,
+		BanquetMenuCheck:  req.BanquetMenuCheck,
+		BuffetMenuCheck:   req.BuffetMenuCheck,
+		RentalPrice:       req.RentalPrice,
+		RentalWeekDays:    req.RentalWeekDays,
+		DepositMin:        req.DepositMin,
+		DepositInfo:       req.DepositInfo,
+		OwnAlcoholAllowed: req.OwnAlcoholAllowed,
+		ServiceSupport:    req.ServiceSupport,
+		CorkageFee:        req.CorkageFee,
+		ExtraCost:         req.ExtraCost,
+		ExtraInfo:         req.ExtraInfo,
+		RoomCategoryID:    req.RoomCategoryID,
+		SleepingPlacesID:  req.SleepingPlacesID,
+		AmenitiesRoomID:   req.AmenitiesRoomID,
+		ServicesRoomID:    req.ServicesRoomID,
+		CheckInAfter:      req.CheckInAfter,
+		CheckInBefore:     req.CheckInBefore,
+		CheckOutAfter:     req.CheckOutAfter,
+		CheckOutBefore:    req.CheckOutBefore,
+		RoomName:          req.RoomName,
+		AccommodationType: req.AccommodationType,
+		RoomPrice:         req.RoomPrice,
+		RoomInfo:          req.RoomInfo,
+		Image:             req.Image,
 	}
 
 	err = s.propertyRepo.Update(ctx, id, request)

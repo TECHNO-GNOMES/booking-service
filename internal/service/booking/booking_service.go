@@ -1,5 +1,6 @@
 package booking
 
+/*
 import (
 	"context"
 	"errors"
@@ -23,11 +24,10 @@ type UpdateBookingRequest struct {
 
 type BookingService struct {
 	bookingRepo *booking.BookingRepo
-	unitRepo    *unit.UnitRepo
 }
 
-func NewBookingService(bookingRepo *booking.BookingRepo, unitRepo *unit.UnitRepo) *BookingService {
-	return &BookingService{bookingRepo: bookingRepo, unitRepo: unitRepo}
+func NewBookingService(bookingRepo *booking.BookingRepo) *BookingService {
+	return &BookingService{bookingRepo: bookingRepo}
 }
 
 func (s *BookingService) Create(ctx context.Context, userID uint, b *Booking) (*models.Booking, error) {
@@ -137,4 +137,4 @@ func (s *BookingService) Confirm(ctx context.Context, id uint, userRole string) 
 	}
 
 	return nil
-}
+}*/

@@ -22,7 +22,7 @@ type FileStorage struct {
 func NewFileStorage(client *s3.Client, endpoint string, publicEndpoint string) *FileStorage {
 	return &FileStorage{
 		client:         client,
-		bucket:         "avatars",
+		bucket:         "images",
 		endpoint:       endpoint,
 		publicEndpoint: publicEndpoint,
 	}

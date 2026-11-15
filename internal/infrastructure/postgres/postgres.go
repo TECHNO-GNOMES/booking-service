@@ -21,8 +21,9 @@ func NewDb(c *config.Config) (*Db, error) {
 		models.User{},
 		models.Property{},
 		models.Booking{},
-		models.Unit{},
+		models.Review{},
 	)
+
 	if err != nil {
 		return nil, err
 	}

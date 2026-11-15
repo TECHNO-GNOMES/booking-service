@@ -12,9 +12,6 @@ type Booking struct {
 	UserID uint `gorm:"not null;index"`
 	User   User `gorm:"foreignKey:UserID"`
 
-	UnitID uint `gorm:"not null;index"`
-	Unit   Unit `gorm:"foreignKey:UnitID"`
-
 	CheckIn  time.Time `gorm:"not null"`
 	CheckOut time.Time `gorm:"not null"`
 

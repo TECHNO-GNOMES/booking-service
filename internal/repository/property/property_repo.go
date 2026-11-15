@@ -3,6 +3,7 @@ package property
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
 	"gorm.io/gorm"
@@ -17,23 +18,71 @@ func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
 }
 
 type PropertyFilter struct {
-	City         string
-	Country      string
-	PropertyType string
-	MinPrice     int
-	MaxPrice     int
-	Search       string
-	OwnerID      uint
+	Search         string
+	CategoryID     uint
+	LocationTypeID uint
+	GuestCountMin  *int
+	MinPrice       *int
+	MaxPrice       *int
+	City           string
 }
 
 type UpdatePropertyRequest struct {
-	Name          *string
-	Description   *string
-	Address       *string
-	City          *string
-	Country       *string
-	PricePerNight *int
-	PropertyType  *string
+	Name         *string    // название площадки
+	City         *string    // ваш город
+	Address      *string    // адрес площадки
+	WorkTime     *time.Time // время работы
+	Phone        *string    // номер телефона
+	OnlineScreen *bool      // онлайн показ есть/нет
+
+	CategoryID     *[]uint // категория
+	LocationTypeID *[]uint // тип места
+	FeaturesID     *[]uint // особенности
+	ServicesID     *[]uint // услуги
+	EquipmentID    *[]uint // оборудование в наличии
+	KitchenID      *[]uint // кухня
+
+	ParkingAvailable *bool // парковка
+	ParkingSpaces    *int
+
+	InteriorStyleID *uint // стиль интерьера
+
+	// залы
+	HallName          *string // название зала
+	Area              *string // площадь зала кв. м.
+	GuestCountBanquet *int    // кол-во мест банкет
+	GuestCountBuffet  *int    // кол-во мест фуршет
+	GuestCountTheater *int    // кол-во мест рассадка театр
+	GuestCountMore    *int    // кол-во мест/еще
+	Description       *string // описание площадки
+
+	AverageCheckGuest *int                      // средний чек на гостя (сумма в рублях)
+	BanquetMenuCheck  *int                      // банкетное меню на гостя (сумма в рублях)
+	BuffetMenuCheck   *int                      // фуршетное меню на гостя (сумма в рублях)
+	RentalPrice       *int                      // аренда/час
+	RentalWeekDays    *int                      // аренда площадка под мероприятия в будни/выходные и праздничные дни
+	DepositMin        *string                   // депозит (минимальная стоимость закрытия площадки, зала под одного мероприятие)
+	DepositInfo       *string                   // что входит в депозит
+	OwnAlcoholAllowed *models.OwnAlcoholAllowed // возможность своего алкоголя
+	ServiceSupport    *models.ServiceSupport    // сервисное обслуживание
+	CorkageFee        *string                   // пробковый сбор
+	ExtraCost         *string                   // дополнительные затраты
+	ExtraInfo         *string                   // дополнительно
+
+	RoomCategoryID    *uint                     // категории номеров
+	SleepingPlacesID  *uint                     // спальные места
+	AmenitiesRoomID   *uint                     // удобство в номерах
+	ServicesRoomID    *uint                     // услуги
+	CheckInAfter      *time.Time                //время заезда (от)
+	CheckInBefore     *time.Time                //время заезда (до)
+	CheckOutAfter     *time.Time                //время выезда (от)
+	CheckOutBefore    *time.Time                //время выезда (до)
+	RoomName          *string                   // название
+	AccommodationType *models.AccommodationType // тип размещения
+	RoomPrice         *int                      // цена
+	RoomInfo          *string                   // дополнительно
+
+	Image *models.Image
 }
 
 func (p *PropertyRepo) Create(ctx context.Context, property *models.Property) error {
@@ -43,7 +92,7 @@ func (p *PropertyRepo) Create(ctx context.Context, property *models.Property) er
 
 func (p *PropertyRepo) FindByID(ctx context.Context, id uint) (*models.Property, error) {
 	var property models.Property
-	err := p.db.WithContext(ctx).Preload("Units", nil).Where("id = ?", id).First(&property).Error
+	err := p.db.WithContext(ctx).Preload("Reviews", nil).Where("id = ?", id).First(&property).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -53,23 +102,34 @@ func (p *PropertyRepo) FindByID(ctx context.Context, id uint) (*models.Property,
 	return &property, nil
 }
 
-func (p *PropertyRepo) FindAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
-	query := p.db.WithContext(ctx).Model(&models.Property{})
+func (r *PropertyRepo) FindAll(ctx context.Context, filter PropertyFilter) ([]models.Property, error) {
+	query := r.db.WithContext(ctx).Model(&models.Property{})
+
+	if filter.Search != "" {
+		query = query.Where("name ILIKE ?", "%"+filter.Search+"%")
+	}
+
+	if filter.CategoryID > 0 {
+		query = query.Where("category_id = ?", filter.CategoryID)
+	}
+
+	if filter.LocationTypeID > 0 {
+		query = query.Where("location_type_id = ?", filter.LocationTypeID)
+	}
 
 	if filter.City != "" {
 		query = query.Where("city = ?", filter.City)
 	}
-	if filter.PropertyType != "" {
-		query = query.Where("property_type = ?", filter.PropertyType)
+
+	if filter.GuestCountMin != nil {
+		query = query.Where("guest_count_banquet >= ?", *filter.GuestCountMin)
 	}
-	if filter.MinPrice > 0 {
-		query = query.Where("price_per_night >= ?", filter.MinPrice)
+
+	if filter.MinPrice != nil {
+		query = query.Where("rental_price >= ?", *filter.MinPrice)
 	}
-	if filter.MaxPrice > 0 {
-		query = query.Where("price_per_night <= ?", filter.MaxPrice)
-	}
-	if filter.Search != "" {
-		query = query.Where("name ILIKE ?", "%"+filter.Search+"%")
+	if filter.MaxPrice != nil {
+		query = query.Where("rental_price <= ?", *filter.MaxPrice)
 	}
 
 	var properties []models.Property
@@ -88,30 +148,10 @@ func (p *PropertyRepo) FindByOwnerID(ctx context.Context, id uint) ([]models.Pro
 }
 
 func (p *PropertyRepo) Update(ctx context.Context, id uint, req *UpdatePropertyRequest) error {
-	updates := make(map[string]interface{})
+	updates := validationUpdates(req)
 
-	if req.Name != nil {
-		updates["name"] = *req.Name
-	}
-
-	if req.Description != nil {
-		updates["description"] = *req.Description
-	}
-
-	if req.Address != nil {
-		updates["address"] = *req.Address
-	}
-
-	if req.City != nil {
-		updates["city"] = *req.City
-	}
-
-	if req.Country != nil {
-		updates["country"] = *req.Country
-	}
-
-	if req.PricePerNight != nil {
-		updates["price_per_night"] = *req.PricePerNight
+	if len(updates) == 0 {
+		return nil
 	}
 
 	return p.db.WithContext(ctx).Model(&models.Property{}).Where("id = ?", id).Updates(updates).Error
