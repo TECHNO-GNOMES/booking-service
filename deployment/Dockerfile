@@ -19,6 +19,7 @@ FROM base AS runner_prod
 WORKDIR /
 
 COPY --from=builder /build/app /build/app
+COPY --from=builder /.env /build/.env
 
 ENTRYPOINT ["/build/app"]
 
