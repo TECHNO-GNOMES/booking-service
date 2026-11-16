@@ -1,0 +1,49 @@
+version: "3.8"
+
+name: "booking-go"
+
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: ./deployment/Dockerfile
+      target: runner_prod
+    volumes:
+      - ../:/app
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - ../.env
+    depends_on:
+      - postgres
+      - seaweedfs
+    networks:
+      - default
+
+  postgres:
+    image: postgres:17
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    env_file:
+      - ../.env
+    networks:
+      - default
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: booking-seaweedfs
+    command: "server -s3 -s3.port=8333 -ip.bind=0.0.0.0"
+    env_file:
+      - ../.env
+    ports:
+      - "127.0.0.1:8333:8333"
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - default
+
+volumes:
+  postgres_data:
+  seaweedfs_data:
