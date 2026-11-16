@@ -1,6 +1,7 @@
 package httpv1
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -47,6 +48,8 @@ func StartServer(h Handlers, cfg *config.Config) {
 	propertyHandler.RegisterRoutes(api, h.Property, cfg.Auth.Secret)
 	//bookingHandler.RegisterRoutes(api, h.Booking, cfg.Auth.Secret)
 	categoriesHandler.RegisterRoutes(api, h.Categories)
+
+	slog.Info("starting server")
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
