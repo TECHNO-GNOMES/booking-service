@@ -2,10 +2,7 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -45,11 +42,6 @@ func (cfg DatabaseConfig) DSN() string {
 }
 
 func Load() *Config {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Print("Error loading .env file")
-	}
-
 	return &Config{
 		DbConfig: DatabaseConfig{
 			User:     os.Getenv("POSTGRES_USER"),
