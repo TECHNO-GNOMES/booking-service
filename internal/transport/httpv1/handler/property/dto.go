@@ -215,3 +215,9 @@ type DeletePropertyOutput struct {
 		Message string `json:"message"`
 	}
 }
+
+type GetMyPropertiesInput struct{}
+
+type GetMyPropertiesOutput struct {
+	Body []Property
+}

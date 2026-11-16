@@ -150,6 +150,23 @@ func (s *PropertyService) GetAll(ctx context.Context, filter PropertyFilter) ([]
 	return properties, nil
 }
 
+func (s *PropertyService) GetByUserId(ctx context.Context, userId uint) ([]models.Property, error) {
+	if userId == 0 {
+		return nil, errors.New("invalid userId")
+	}
+
+	property, err := s.propertyRepo.FindByOwnerID(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if property == nil {
+		return nil, errors.New("invalid property")
+	}
+
+	return property, nil
+}
+
 func (s *PropertyService) Update(ctx context.Context, id uint, userID uint, userRole string, req *UpdatePropertyRequest) (*models.Property, error) {
 	propertyId, err := s.propertyRepo.FindByID(ctx, id)
 	if err != nil {

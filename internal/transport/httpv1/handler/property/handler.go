@@ -301,6 +301,83 @@ func (h *PropertyHandler) UpdatePropertyHandler(ctx context.Context, input *Upda
 	}, nil
 }
 
+func (h *PropertyHandler) GetMyPropertiesHandler(ctx context.Context, input *GetMyPropertiesInput) (*GetMyPropertiesOutput, error) {
+	userID, ok := middleware.GetUserIDFromContext(ctx)
+	if !ok || userID == 0 {
+		return nil, huma.Error401Unauthorized("user not authenticated")
+	}
+
+	properties, err := h.propertyService.GetByUserId(ctx, userID)
+	if err != nil {
+		return nil, huma.Error400BadRequest(err.Error())
+	}
+
+	var result []Property
+	for _, p := range properties {
+		var ownAlcohol, serviceSupport string
+		if p.OwnAlcoholAllowed != nil {
+			ownAlcohol = string(*p.OwnAlcoholAllowed)
+		}
+		if p.ServiceSupport != nil {
+			serviceSupport = string(*p.ServiceSupport)
+		}
+
+		result = append(result, Property{
+			Name:              p.Name,
+			City:              p.City,
+			Address:           p.Address,
+			DistrictAddress:   p.DistrictAddress,
+			MetroAddress:      p.MetroAddress,
+			WorkTime:          p.WorkTime,
+			Phone:             p.Phone,
+			OnlineScreen:      p.OnlineScreen,
+			CategoryID:        p.CategoryID,
+			LocationTypeID:    p.LocationTypeID,
+			FeaturesID:        p.FeaturesID,
+			ServicesID:        p.ServicesID,
+			EquipmentID:       p.EquipmentID,
+			KitchenID:         p.KitchenID,
+			ParkingAvailable:  p.ParkingAvailable,
+			ParkingSpaces:     p.ParkingSpaces,
+			InteriorStyleID:   p.InteriorStyleID,
+			HallName:          p.HallName,
+			Area:              p.Area,
+			GuestCountBanquet: p.GuestCountBanquet,
+			GuestCountBuffet:  p.GuestCountBuffet,
+			GuestCountTheater: p.GuestCountTheater,
+			GuestCountMore:    p.GuestCountMore,
+			Description:       p.Description,
+			AverageCheckGuest: p.AverageCheckGuest,
+			BanquetMenuCheck:  p.BanquetMenuCheck,
+			BuffetMenuCheck:   p.BuffetMenuCheck,
+			RentalPrice:       p.RentalPrice,
+			RentalWeekDays:    p.RentalWeekDays,
+			DepositMin:        p.DepositMin,
+			DepositInfo:       p.DepositInfo,
+			OwnAlcoholAllowed: ownAlcohol,
+			ServiceSupport:    serviceSupport,
+			CorkageFee:        p.CorkageFee,
+			ExtraCost:         p.ExtraCost,
+			ExtraInfo:         p.ExtraInfo,
+			Image:             p.Image,
+			RoomCategoryID:    p.RoomCategoryID,
+			SleepingPlacesID:  p.SleepingPlacesID,
+			AmenitiesRoomID:   p.AmenitiesRoomID,
+			ServicesRoomID:    p.ServicesRoomID,
+			CheckInAfter:      p.CheckInAfter,
+			CheckInBefore:     p.CheckInBefore,
+			CheckOutAfter:     p.CheckOutAfter,
+			CheckOutBefore:    p.CheckOutBefore,
+			RoomName:          p.RoomName,
+			AccommodationType: string(p.AccommodationType),
+			RoomPrice:         p.RoomPrice,
+			RoomInfo:          p.RoomInfo,
+		})
+	}
+
+	return &GetMyPropertiesOutput{Body: result}, nil
+}
+
 func (h *PropertyHandler) DeletePropertyHandler(ctx context.Context, input *DeletePropertyInput) (*DeletePropertyOutput, error) {
 	propertyID, err := h.propertyService.GetById(ctx, input.ID)
 	if err != nil {
