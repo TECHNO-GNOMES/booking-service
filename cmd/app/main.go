@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"log/slog"
 
 	"github.com/nurgal1ev/booking-service/internal/app"
 	"github.com/nurgal1ev/booking-service/internal/config"
@@ -13,6 +14,7 @@ import (
 
 func main() {
 	cfg := config.Load()
+	slog.Info("loading config")
 	ctx := context.Background()
 
 	db, err := postgres.NewDb(cfg)
