@@ -20,3 +20,17 @@ func generateJWT(userID uint, email string, role string, secret string) (string,
 func (s *UserService) GenerateToken(userID uint, email string, role string) (string, error) {
 	return generateJWT(userID, email, role, s.jwtSecret)
 }
+
+func generateRefreshToken(userID uint, secret string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": userID,
+		"type":    "refresh",
+		"exp":     time.Now().Add(30 * 24 * time.Hour).Unix(),
+	})
+
+	return token.SignedString([]byte(secret))
+}
+
+func (s *UserService) GenerateRefreshToken(userID uint) (string, error) {
+	return generateRefreshToken(userID, s.jwtSecret)
+}
