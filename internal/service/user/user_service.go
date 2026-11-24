@@ -116,38 +116,43 @@ func (s *UserService) FindByEmail(ctx context.Context, email string) (*models.Us
 	return user, err
 }
 
-func (s *UserService) Login(ctx context.Context, email *string, phone *string, password string) (string, error) {
+func (s *UserService) Login(ctx context.Context, email *string, phone *string, password string) (string, string, error) {
 	var user *models.User
 	var err error
 
 	if email != nil {
 		user, err = s.userRepo.FindByEmail(ctx, *email)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 	} else if phone != nil {
 		user, err = s.userRepo.FindByPhone(ctx, *phone)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 	} else {
-		return "", errors.New("invalid credentials")
+		return "", "", errors.New("invalid credentials")
 	}
 
 	if user == nil {
-		return "", errors.New("invalid credentials")
+		return "", "", errors.New("invalid credentials")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", errors.New("invalid credentials")
+		return "", "", errors.New("invalid credentials")
 	}
 
 	token, err := generateJWT(user.ID, user.Email, user.Role, s.jwtSecret)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return token, nil
+	refreshToken, err := generateRefreshToken(user.ID, s.jwtSecret)
+	if err != nil {
+		return "", "", err
+	}
+
+	return token, refreshToken, nil
 }
 
 func (s *UserService) Update(ctx context.Context, id uint, req *UpdateUserRequest) (*models.User, error) {
