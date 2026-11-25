@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nurgal1ev/booking-service/internal/models"
+	"github.com/nurgal1ev/booking-service/internal/repository/refresh_token"
 	"github.com/nurgal1ev/booking-service/internal/repository/user"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -38,14 +39,16 @@ type UpdateUserRequest struct {
 }
 
 type UserService struct {
-	userRepo  *user.UserRepo
-	jwtSecret string
+	userRepo         *user.UserRepo
+	refreshTokenRepo *refresh_token.RefreshTokenRepo
+	jwtSecret        string
 }
 
-func NewUserService(userRepo *user.UserRepo, jwtSecret string) *UserService {
+func NewUserService(userRepo *user.UserRepo, jwtSecret string, refreshTokenRepo *refresh_token.RefreshTokenRepo) *UserService {
 	return &UserService{
-		userRepo:  userRepo,
-		jwtSecret: jwtSecret,
+		userRepo:         userRepo,
+		jwtSecret:        jwtSecret,
+		refreshTokenRepo: refreshTokenRepo,
 	}
 }
 
@@ -149,6 +152,15 @@ func (s *UserService) Login(ctx context.Context, email *string, phone *string, p
 
 	refreshToken, err := generateRefreshToken(user.ID, s.jwtSecret)
 	if err != nil {
+		return "", "", err
+	}
+
+	if err := s.refreshTokenRepo.Create(ctx, &models.RefreshToken{
+		UserID:    user.ID,
+		Token:     refreshToken,
+		ExpiresAt: time.Now().Add(30 * 24 * time.Hour),
+		Revoked:   false,
+	}); err != nil {
 		return "", "", err
 	}
 
