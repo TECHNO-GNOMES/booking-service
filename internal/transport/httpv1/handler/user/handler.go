@@ -55,15 +55,15 @@ func (u *UserHandler) LoginHandler(ctx context.Context, input *LoginInput) (*Log
 		return nil, huma.Error400BadRequest("provide only email or phone, not both")
 	}
 
-	token, err := u.userService.Login(ctx, input.Body.Email, input.Body.Phone, input.Body.Password)
+	accessToken, refreshToken, err := u.userService.Login(ctx, input.Body.Email, input.Body.Phone, input.Body.Password)
 	if err != nil {
 		return nil, huma.Error400BadRequest(err.Error())
 	}
 
-	resp := &LoginOutput{}
-	resp.Body.AccessToken = token
-
-	return resp, nil
+	return &LoginOutput{Body: struct {
+		AccessToken  string `json:"accessToken"`
+		RefreshToken string `json:"refreshToken"`
+	}{AccessToken: accessToken, RefreshToken: refreshToken}}, nil
 }
 
 func (u *UserHandler) UpdateProfileHandler(ctx context.Context, input *UpdateUserInput) (*UpdateUserOutput, error) {
