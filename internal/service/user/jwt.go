@@ -11,6 +11,7 @@ func generateJWT(userID uint, email string, role string, secret string) (string,
 		"user_id": userID,
 		"email":   email,
 		"role":    role,
+		"type":    "access_token",
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 
