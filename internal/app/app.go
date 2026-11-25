@@ -5,6 +5,7 @@ import (
 	"github.com/nurgal1ev/booking-service/internal/config"
 	"github.com/nurgal1ev/booking-service/internal/infrastructure/seaweedfs"
 	"github.com/nurgal1ev/booking-service/internal/repository/property"
+	"github.com/nurgal1ev/booking-service/internal/repository/refresh_token"
 	userRepo "github.com/nurgal1ev/booking-service/internal/repository/user"
 	propertyService "github.com/nurgal1ev/booking-service/internal/service/property"
 	userService "github.com/nurgal1ev/booking-service/internal/service/user"
@@ -16,9 +17,10 @@ import (
 
 func InitHandlers(db *gorm.DB, cfg *config.Config, s3Client *s3.Client) httpv1.Handlers {
 	filestorage := seaweedfs.NewFileStorage(s3Client, cfg.S3Config.S3Endpoint, cfg.S3Config.S3PublicEndpoint)
+	refreshTokenRepository := refresh_token.NewRefreshTokenRepo(db)
 
 	userRepository := userRepo.NewUserRepo(db)
-	userService := userService.NewUserService(userRepository, cfg.Auth.Secret)
+	userService := userService.NewUserService(userRepository, cfg.Auth.Secret, refreshTokenRepository)
 	userHandler := userHandler.NewUserHandler(userService, filestorage)
 
 	propertyRepository := property.NewPropertyRepo(db)
