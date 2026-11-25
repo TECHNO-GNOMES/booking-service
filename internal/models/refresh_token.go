@@ -12,5 +12,5 @@ type RefreshToken struct {
 	User      User   `gorm:"foreignKey:UserID"`
 	Token     string `gorm:"uniqueIndex;not null"`
 	Revoked   bool   `gorm:"default:false"`
-	ExpiresAt *time.Time
+	ExpiresAt time.Time
 }
